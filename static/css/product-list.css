@@ -1,0 +1,134 @@
+/* Страница «Все товары» — в духе категорий, минималистично */
+
+/* Тулбар и заголовок (раньше были inline в шаблоне) */
+.product-list-page .pl-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.product-list-page .pl-toolbar .product-suggest-wrap {
+    flex: 1 1 200px;
+}
+
+.product-list-page .pl-toolbar .form-select {
+    min-width: 150px;
+}
+
+.product-list-page .pl-heading {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.product-list-page .pl-heading__title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.product-list-page .pl-heading__count {
+    font-size: 0.9rem;
+    color: var(--bs-secondary-color, #6c757d);
+}
+
+/* Мобильная панель категорий в стиле catlist-sidebar */
+.product-list-page .product-list-sidebar-mobile {
+    width: 100%;
+    max-width: 100%;
+    flex: none;
+}
+
+.product-list-page .page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 1.25rem 0;
+    color: #1a1a1a;
+}
+
+.product-list-page .product-list-toolbar {
+    margin-bottom: 2rem;
+}
+
+.product-list-page .product-list-search-form .form-control {
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.product-list-page .product-list-search-form .form-control:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.15);
+}
+
+.product-list-page .product-list-search-form .btn-success {
+    border-radius: 10px;
+}
+
+.product-list-page .product-list-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: flex-end;
+    margin-top: 1rem;
+}
+
+.product-list-page .product-list-filters .form-select {
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    min-width: 160px;
+}
+
+.product-list-page .product-list-filters .form-select:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.15);
+}
+
+.product-list-page .product-list-filters .btn-outline-secondary {
+    border-radius: 10px;
+}
+
+.product-list-page .product-list-empty {
+    padding: 2rem 1rem;
+    text-align: center;
+    color: #6c757d;
+    font-size: 0.95rem;
+}
+
+.product-list-page .product-list-empty a {
+    color: #28a745;
+}
+
+.product-list-page .pagination {
+    margin-top: 1.5rem;
+    margin-bottom: 0;
+}
+
+.product-list-page .pagination .page-link {
+    border: none;
+    color: #1a1a1a;
+    padding: 0.5rem 0.75rem;
+}
+
+.product-list-page .pagination .page-item.active .page-link {
+    background: transparent;
+    color: #28a745;
+    font-weight: 600;
+}
+
+.product-list-page .pagination .page-item:not(.active) .page-link:hover {
+    background: rgba(40, 167, 69, 0.08);
+    color: #28a745;
+}
+
+@media (max-width: 575.98px) {
+    .product-list-page .product-list-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .product-list-page .product-list-filters .form-select {
+        min-width: 0;
+    }
+}

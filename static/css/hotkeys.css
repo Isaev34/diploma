@@ -1,0 +1,177 @@
+/* Стили для системы горячих клавиш */
+
+/* Overlay со справкой */
+.hotkeys-help-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.hotkeys-help-overlay.show {
+    display: flex;
+    animation: fadeIn 0.3s ease;
+}
+
+.hotkeys-help-content {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    max-width: 800px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideUp 0.3s ease;
+}
+
+.hotkeys-help-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.hotkeys-help-header h3 {
+    margin: 0;
+    color: #28a745;
+    font-weight: 600;
+}
+
+.hotkeys-help-body {
+    padding: 25px;
+}
+
+.hotkeys-help-body h5 {
+    color: #495057;
+    margin-bottom: 15px;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.hotkey-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.hotkey-item:last-child {
+    border-bottom: none;
+}
+
+.hotkey-item kbd {
+    display: inline-block;
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-right: 12px;
+    min-width: 40px;
+    text-align: center;
+    font-family: 'Courier New', monospace;
+}
+
+.hotkey-item span {
+    flex: 1;
+    color: #6c757d;
+    font-size: 0.95rem;
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Уведомления */
+.hotkey-notification {
+    animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Индикатор активных горячих клавиш (опционально) */
+.hotkeys-indicator {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(40, 167, 69, 0.9);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    display: none;
+}
+
+.hotkeys-indicator.show {
+    display: block;
+    animation: pulse 0.5s ease;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .hotkeys-help-content {
+        max-width: 95%;
+        margin: 10px;
+    }
+    
+    .hotkey-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .hotkey-item kbd {
+        margin-bottom: 8px;
+        margin-right: 0;
+    }
+}
+
+/* Hero, поиск, feature-карточки перенесены в theme.css */

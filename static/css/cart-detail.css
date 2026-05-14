@@ -1,0 +1,259 @@
+/* Страница корзины — минималистичный вид в духе сайта */
+
+.cart-page .cart-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 1.5rem 0;
+    color: #1a1a1a;
+}
+
+/* Блок списка товаров */
+.cart-page .cart-list-card {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.cart-page .cart-list-card .card-body {
+    padding: 0;
+}
+
+.cart-page .cart-item-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    transition: background 0.15s ease;
+}
+
+.cart-page .cart-item-row:last-child {
+    border-bottom: none;
+}
+
+.cart-page .cart-item-image {
+    flex-shrink: 0;
+    width: 72px;
+    height: 72px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #f5f5f5;
+}
+
+.cart-page .cart-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cart-page .cart-item-image .no-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #adb5bd;
+}
+
+.cart-page .cart-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.cart-page .cart-item-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #1a1a1a;
+    margin: 0 0 0.2rem 0;
+}
+
+.cart-page .cart-item-category {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin: 0;
+}
+
+.cart-page .cart-item-price {
+    flex-shrink: 0;
+    font-size: 0.9rem;
+    color: #28a745;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.cart-page .cart-item-price .old-price {
+    color: #adb5bd;
+    text-decoration: line-through;
+    font-weight: 400;
+    margin-right: 0.35rem;
+}
+
+.cart-page .cart-item-qty {
+    flex-shrink: 0;
+}
+.cart-page .cart-item-qty .form-control {
+    width: 56px;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.cart-page .cart-item-qty .form-control:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.15);
+}
+
+.cart-page .cart-item-qty .btn {
+    border-radius: 10px;
+}
+
+.cart-page .cart-item-total {
+    flex-shrink: 0;
+    min-width: 4rem;
+    text-align: right;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #1a1a1a;
+}
+
+.cart-page .cart-item-remove {
+    padding: 0.4rem;
+    color: #6c757d;
+    border: none;
+    background: transparent;
+    border-radius: 10px;
+    transition: color 0.2s, background 0.2s;
+}
+
+.cart-page .cart-item-remove:hover {
+    color: #dc3545;
+    background: rgba(220, 53, 69, 0.08);
+}
+
+/* Боковая панель — итого */
+.cart-page .cart-summary-card {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 16px;
+    padding: 1.25rem;
+}
+
+.cart-page .cart-summary-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 1rem 0;
+    color: #1a1a1a;
+}
+
+.cart-page .cart-summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.cart-page .cart-summary-total {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.cart-page .cart-summary-total .amount {
+    color: #28a745;
+}
+
+.cart-page .cart-summary-card .btn-success {
+    border-radius: 12px;
+    padding: 0.65rem 1.25rem;
+    font-weight: 600;
+    margin-top: 1rem;
+}
+
+.cart-page .cart-summary-card .alert {
+    border-radius: 12px;
+    border: none;
+    font-size: 0.9rem;
+}
+
+.cart-page .cart-summary-card .btn-primary,
+.cart-page .cart-summary-card .btn-outline-primary {
+    border-radius: 12px;
+}
+
+/* Продолжить покупки */
+.cart-page .cart-continue-card {
+    margin-top: 1rem;
+    background: #f8f9fa;
+    border: none;
+    border-radius: 16px;
+    padding: 1rem;
+    text-align: center;
+}
+
+.cart-page .cart-continue-card .btn {
+    border-radius: 10px;
+}
+
+/* Пустая корзина */
+.cart-page .cart-empty {
+    text-align: center;
+    padding: 3rem 1.5rem;
+}
+
+.cart-page .cart-empty-icon {
+    font-size: 3rem;
+    color: #dee2e6;
+    margin-bottom: 1rem;
+}
+
+.cart-page .cart-empty-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 0.5rem 0;
+}
+
+.cart-page .cart-empty-text {
+    color: #6c757d;
+    font-size: 0.95rem;
+    margin: 0 0 1.5rem 0;
+}
+
+.cart-page .cart-empty .btn {
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+/* Адаптив: на мобильных — колонки в столбик, компактные строки */
+@media (max-width: 767.98px) {
+    .cart-page .cart-item-row {
+        flex-wrap: wrap;
+        padding: 0.75rem 1rem;
+    }
+    .cart-page .cart-item-image {
+        width: 56px;
+        height: 56px;
+    }
+    .cart-page .cart-item-info {
+        flex: 1 1 calc(100% - 56px - 80px);
+    }
+    .cart-page .cart-item-price {
+        order: 3;
+        width: 100%;
+        padding-left: calc(56px + 1rem);
+    }
+    .cart-page .cart-item-qty {
+        order: 4;
+    }
+    .cart-page .cart-item-total {
+        order: 5;
+        margin-left: auto;
+    }
+    .cart-page .cart-item-remove {
+        order: 6;
+    }
+}

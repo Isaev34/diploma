@@ -1,0 +1,52 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Категории товаров{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/category-list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="catlist-page">
+
+    <div class="catlist-layout">
+
+        {# ── Боковое меню ── #}
+        <aside class="catlist-sidebar">
+            <h2 class="catlist-sidebar__heading">Категории товаров</h2>
+            <nav class="catlist-sidebar__nav">
+                {% for cat in categories %}
+                <a href="{% url 'catalog:category_detail' cat.slug %}" class="catlist-sidebar__item">
+                    {{ cat.name }}
+                </a>
+                {% endfor %}
+            </nav>
+        </aside>
+
+        {# ── Карточки категорий ── #}
+        <div class="catlist-content">
+            {% if categories %}
+            <div class="catlist-grid">
+                {% for cat in categories %}
+                <a href="{% url 'catalog:category_detail' cat.slug %}"
+                   class="card product-card catlist-category-card h-100 text-decoration-none d-flex flex-column">
+                    <div class="catlist-category-card__media{% if not cat.image %} catlist-category-card__media--placeholder{% endif %}"
+                         {% if cat.image %}style="background-image: url('{{ cat.image.url }}');"{% endif %}
+                         aria-hidden="true"></div>
+                    <div class="card-body product-card-body d-flex flex-column flex-grow-1 py-3">
+                        <h3 class="product-card-title mb-1">
+                            <span class="text-body">{{ cat.name }}</span>
+                        </h3>
+                        <span class="text-success small mt-auto">Товары категории <i class="fas fa-chevron-right ms-1" style="font-size:0.65em;"></i></span>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="catlist-empty">Категории пока не добавлены.</p>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+{% endblock %}

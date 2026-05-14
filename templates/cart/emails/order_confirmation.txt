@@ -1,0 +1,51 @@
+Заказ успешно оформлен!
+
+Здравствуйте, {{ user.username }}!
+
+Ваш заказ #{{ order.id }} успешно оформлен и принят в обработку.
+
+ИНФОРМАЦИЯ О ЗАКАЗЕ:
+--------------------
+Номер заказа: #{{ order.id }}
+Дата оформления: {{ order.created_at|date:"d.m.Y H:i" }}
+Статус: {{ order.get_status_display }}
+Способ оплаты: {{ order.get_payment_method_display }}
+Адрес доставки: {{ order.delivery_address }}
+
+СОСТАВ ЗАКАЗА:
+--------------
+{% for item in order_items %}
+- {{ item.product.name }}
+  Количество: {{ item.quantity }} шт. × {{ item.price_at_purchase|floatformat:0 }} ₽
+{% endfor %}
+{% if order.delivery_fee and order.delivery_fee > 0 %}
+Доставка: {{ order.delivery_fee|floatformat:0 }} ₽
+{% endif %}
+
+ИТОГО К ОПЛАТЕ: {{ order.total_amount|floatformat:0 }} ₽
+{% if order.bonus_points_used > 0 %}
+Списано бонусов: {{ order.bonus_points_used }} ₽
+{% endif %}
+{% if order.bonus_points_earned > 0 %}
+Начислено бонусов: {{ order.bonus_points_earned }}
+{% endif %}
+
+{% if order.delivery_comment_courier or order.delivery_comment_picker %}
+ВАШИ КОММЕНТАРИИ:
+-----------------
+{% if order.delivery_comment_courier %}
+Для курьера: {{ order.delivery_comment_courier }}
+{% endif %}
+{% if order.delivery_comment_picker %}
+Для сборщика: {{ order.delivery_comment_picker }}
+{% endif %}
+{% endif %}
+
+Вы можете отслеживать статус заказа в личном кабинете.
+
+Спасибо за ваш заказ!
+
+---
+Это автоматическое письмо. Пожалуйста, не отвечайте на него.
+© 2024 Интернет-магазин. Все права защищены.
+

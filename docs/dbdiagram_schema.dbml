@@ -1,0 +1,214 @@
+// =====================================================
+// Физическая модель данных
+// Интернет-магазин продуктов питания с доставкой
+// Django / PostgreSQL
+// =====================================================
+
+Table users_user {
+  id            serial       [pk, not null, note: "Первичный ключ"]
+  username      varchar(150) [not null, unique]
+  email         varchar(254) [not null, unique]
+  password      varchar(128) [not null]
+  first_name    varchar(150)
+  last_name     varchar(150)
+  is_staff      boolean      [not null, default: false]
+  is_active     boolean      [not null, default: true]
+  is_superuser  boolean      [not null, default: false]
+  date_joined   timestamp    [not null]
+  last_login    timestamp
+  phone         varchar(20)
+  bonus_points  integer      [not null, default: 0, note: "CHECK >= 0"]
+  avatar        varchar
+  created_at    timestamp    [not null, default: `now()`]
+  updated_at    timestamp    [not null, default: `now()`]
+
+  Note: "Расширяет AbstractUser Django. Роли: buyer / courier / picker / manager / admin"
+}
+
+Table users_address {
+  id          serial        [pk, not null]
+  user_id     integer       [not null, ref: > users_user.id]
+  city        varchar(100)  [not null]
+  street      varchar(200)  [not null]
+  house       varchar(20)   [not null]
+  block       varchar(20)
+  entrance    varchar(10)
+  floor       integer
+  apartment   varchar(20)
+  latitude    decimal(9,6)
+  longitude   decimal(9,6)
+  is_default  boolean       [not null, default: false]
+  created_at  timestamp     [not null, default: `now()`]
+  updated_at  timestamp     [not null, default: `now()`]
+
+  Note: "on DELETE CASCADE (user)"
+}
+
+Table users_usercard {
+  id               serial       [pk, not null]
+  user_id          integer      [not null, ref: > users_user.id]
+  card_type        varchar(20)  [not null, note: "visa | mastercard | mir"]
+  last_four_digits varchar(4)   [not null]
+  cardholder_name  varchar(100) [not null]
+  is_default       boolean      [not null, default: false]
+  created_at       timestamp    [not null, default: `now()`]
+
+  Note: "on DELETE CASCADE (user)"
+}
+
+Table users_useractivitylog {
+  id             serial       [pk, not null]
+  user_id        integer      [ref: > users_user.id, note: "NULL = анонимный"]
+  action_type    varchar(50)  [not null]
+  description    text         [not null]
+  ip_address     varchar(45)
+  user_agent     text
+  request_path   varchar(500)
+  request_method varchar(10)
+  status_code    integer
+  created_at     timestamp    [not null, default: `now()`]
+
+  Note: "on DELETE SET NULL (user). IDX: action_type, created_at"
+}
+
+Table catalog_category {
+  id          serial       [pk, not null]
+  name        varchar(100) [not null, unique]
+  slug        varchar(100) [not null, unique]
+  description text
+  image       varchar
+  is_active   boolean      [not null, default: true]
+  created_at  timestamp    [not null, default: `now()`]
+  updated_at  timestamp    [not null, default: `now()`]
+
+  Note: "IDX: is_active, slug"
+}
+
+Table catalog_product {
+  id               serial         [pk, not null]
+  name             varchar(200)   [not null]
+  slug             varchar(200)   [not null]
+  description      text
+  barcode          varchar(50)    [unique, note: "NULL если нет штрихкода"]
+  price            decimal(10,2)  [not null, note: "CHECK >= 0"]
+  discount_percent integer        [not null, default: 0, note: "CHECK 0-100"]
+  category_id      integer        [not null, ref: > catalog_category.id]
+  image            varchar
+  is_active        boolean        [not null, default: true]
+  in_stock         boolean        [not null, default: true]
+  stock_quantity   integer        [not null, default: 0, note: "CHECK >= 0"]
+  created_at       timestamp      [not null, default: `now()`]
+  updated_at       timestamp      [not null, default: `now()`]
+
+  indexes {
+    (name, category_id) [unique]
+    is_active
+    in_stock
+    slug
+  }
+
+  Note: "on DELETE PROTECT (category). CHECK: price>=0, discount 0-100"
+}
+
+Table cart_order {
+  id                       serial         [pk, not null]
+  user_id                  integer        [not null, ref: > users_user.id, note: "Покупатель"]
+  courier_id               integer        [ref: > users_user.id, note: "NULL пока не назначен"]
+  picker_id                integer        [ref: > users_user.id, note: "NULL пока не назначен"]
+  payment_card_id          integer        [ref: > users_usercard.id, note: "NULL если наличные"]
+  status                   varchar(20)    [not null, default: 'new', note: "new|confirmed|picking|delivering|delivered|cancelled"]
+  verification_code        varchar(8)     [unique, note: "Код подтверждения получения"]
+  payment_method           varchar(20)    [not null, note: "card | cash | online"]
+  delivery_city            varchar(100)   [not null]
+  delivery_street          varchar(200)   [not null]
+  delivery_house           varchar(20)    [not null]
+  delivery_block           varchar(20)
+  delivery_entrance        varchar(10)
+  delivery_floor           integer
+  delivery_apartment       varchar(20)
+  delivery_lat             decimal(9,6)
+  delivery_lng             decimal(9,6)
+  delivery_comment_courier text
+  delivery_comment_picker  text
+  total_amount             decimal(10,2)  [not null]
+  bonus_points_used        integer        [not null, default: 0]
+  bonus_points_earned      integer        [not null, default: 0]
+  photo_report             varchar
+  courier_fee              decimal(10,2)  [not null, default: 0]
+  delivery_fee             decimal(10,2)  [not null, default: 0]
+  created_at               timestamp      [not null, default: `now()`]
+  updated_at               timestamp      [not null, default: `now()`]
+
+  indexes {
+    user_id
+    courier_id
+    status
+    created_at
+  }
+
+  Note: "IDX: user_id, courier_id, status, created_at"
+}
+
+Table cart_orderitem {
+  id                  serial         [pk, not null]
+  order_id            integer        [not null, ref: > cart_order.id]
+  product_id          integer        [ref: > catalog_product.id, note: "NULL если товар удалён"]
+  replaced_item_id    integer        [ref: > cart_orderitem.id, note: "self-ref: замена товара"]
+  quantity            integer        [not null, note: "CHECK >= 1"]
+  expected_barcode    varchar(50)
+  is_replacement      boolean        [not null, default: false]
+  replacement_comment varchar(255)
+  custom_product_name varchar(255)
+  price_at_purchase   decimal(10,2)  [not null]
+  is_scanned          boolean        [not null, default: false]
+
+  indexes {
+    (order_id, product_id) [unique]
+  }
+
+  Note: "on DELETE CASCADE (order). on DELETE SET NULL (product). UQ(order_id, product_id)"
+}
+
+Table cart_cart {
+  id          serial      [pk, not null]
+  user_id     integer     [ref: > users_user.id, note: "NULL для анонимных"]
+  session_key varchar(40) [note: "Задан для анонимных корзин"]
+  created_at  timestamp   [not null, default: `now()`]
+  updated_at  timestamp   [not null, default: `now()`]
+
+  Note: "Анонимная: user_id=NULL, session_key задан. Авторизованная: user_id задан"
+}
+
+Table cart_cartitem {
+  id         serial    [pk, not null]
+  cart_id    integer   [not null, ref: > cart_cart.id]
+  product_id integer   [not null, ref: > catalog_product.id]
+  quantity   integer   [not null, note: "CHECK >= 1"]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+
+  indexes {
+    (cart_id, product_id) [unique]
+  }
+
+  Note: "on DELETE CASCADE (cart и product). UQ(cart_id, product_id)"
+}
+
+Table shifts_shift {
+  id             serial         [pk, not null]
+  courier_id     integer        [not null, ref: > users_user.id]
+  started_at     timestamp
+  ended_at       timestamp
+  is_confirmed   boolean        [not null, default: false]
+  status         varchar(20)    [not null, note: "pending | started | ended"]
+  orders_count   integer        [not null, default: 0, note: "CHECK >= 0"]
+  earnings       decimal(10,2)  [not null, default: 0]
+  online_minutes integer        [not null, default: 0, note: "CHECK >= 0"]
+
+  indexes {
+    courier_id
+    status
+  }
+
+  Note: "on DELETE CASCADE (courier). IDX: courier_id, status"
+}

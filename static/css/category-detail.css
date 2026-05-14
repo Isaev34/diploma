@@ -1,0 +1,89 @@
+/* ========== Страница категории с товарами ========== */
+
+.category-detail-page .cat-content__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+}
+
+.category-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+.category-search-form {
+    max-width: 280px;
+    flex-shrink: 0;
+}
+
+.category-search-form .form-control {
+    border-radius: 10px 0 0 10px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    font-size: 0.875rem;
+}
+
+.category-search-form .form-control:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.15);
+}
+
+.category-search-form .btn-success {
+    border-radius: 0 10px 10px 0;
+}
+
+.category-search-form .btn-outline-secondary {
+    border-radius: 0 10px 10px 0;
+}
+
+.category-empty {
+    padding: 3rem 1rem;
+    text-align: center;
+    color: #6c757d;
+    font-size: 0.95rem;
+}
+
+.category-empty a { color: #28a745; }
+
+/* Пагинация */
+.category-detail-page .pagination .page-link {
+    border: none;
+    color: #1a1a1a;
+    padding: 0.5rem 0.75rem;
+}
+
+.category-detail-page .pagination .page-item.active .page-link {
+    background: transparent;
+    color: #28a745;
+    font-weight: 600;
+}
+
+.category-detail-page .pagination .page-item:not(.active) .page-link:hover {
+    background: rgba(40, 167, 69, 0.08);
+    color: #28a745;
+}
+
+@media (max-width: 575.98px) {
+    .category-detail-page .cat-content__top {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .category-search-form {
+        max-width: 100%;
+        width: 100%;
+    }
+}
+
+/* ── Тёмная тема ── */
+body.dark-theme .category-title { color: #f1f5f9; }
+
+body.dark-theme .category-search-form .form-control {
+    background: #1e293b;
+    color: #e5e7eb;
+    border-color: rgba(148, 163, 184, 0.2);
+}

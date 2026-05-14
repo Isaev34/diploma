@@ -1,0 +1,21 @@
+{% extends "admin/index.html" %}
+{% load users_tags %}
+
+{# Блок внизу главной страницы админки: бэкап БД (только менеджеры / админы) #}
+{% block content %}
+{{ block.super }}
+{% if request.user|is_manager %}
+<div class="border-top mt-4 pt-4 px-2 pb-2">
+    <p class="text-muted text-uppercase small fw-bold mb-2" style="letter-spacing: .06em;">Резервное копирование</p>
+    <form method="post" action="{% url 'admin:backup_database' %}">
+        {% csrf_token %}
+        <p class="text-muted small mb-2">
+            Выгрузка дампа PostgreSQL (<code>pg_dump</code>). На сервере должна быть доступна утилита <code>pg_dump</code>.
+        </p>
+        <button type="submit" class="btn btn-secondary btn-sm">
+            <i class="fas fa-download me-1"></i>Скачать SQL-бэкап
+        </button>
+    </form>
+</div>
+{% endif %}
+{% endblock %}

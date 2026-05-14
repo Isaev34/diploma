@@ -1,0 +1,43 @@
+/* Выпадающий список подсказок товаров */
+
+.product-suggest-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 2px;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    max-height: 280px;
+    overflow-y: auto;
+    z-index: 1050;
+}
+
+.product-suggest-dropdown[hidden] {
+    display: none !important;
+}
+
+.product-suggest-item {
+    display: block;
+    padding: 0.6rem 1rem;
+    color: #1a1a1a;
+    text-decoration: none;
+    font-size: 0.95rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    transition: background 0.15s ease;
+}
+
+.product-suggest-item:last-child {
+    border-bottom: none;
+}
+
+.product-suggest-item:hover {
+    background: rgba(40, 167, 69, 0.08);
+    color: #1a1a1a;
+}
+
+.product-suggest-wrap {
+    position: relative;
+}

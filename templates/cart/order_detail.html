@@ -1,0 +1,144 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Заказ #{{ order.id }}{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/order-detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="order-detail-page">
+    <h1 class="order-detail-title">Заказ #{{ order.id }}</h1>
+
+    <div class="row">
+        <div class="col-md-8 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-header">Состав заказа</div>
+                <div class="card-body">
+                    {% for item in order_items %}
+                    <div class="order-item-row">
+                        <div class="order-item-image">
+                            {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                            {% else %}
+                            <div class="no-image"><i class="fas fa-image"></i></div>
+                            {% endif %}
+                        </div>
+                        <div class="order-item-info">
+                            <div class="order-item-name">{{ item.product.name }}</div>
+                            <div class="order-item-category">{{ item.product.category.name }}</div>
+                        </div>
+                        <div class="order-item-price">{{ item.price_at_purchase|floatformat:0 }} ₽</div>
+                        <div class="order-item-qty">{{ item.quantity }} шт.</div>
+                        <div class="order-item-total">{{ item.get_total_price|floatformat:0 }} ₽</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">Информация о заказе</div>
+                <div class="card-body">
+                    <div class="order-info-row">
+                        <div class="order-info-label">Статус</div>
+                        <span class="order-status-badge badge
+                            {% if order.status == 'COOKING' %}bg-warning
+                            {% elif order.status == 'READY' %}bg-info
+                            {% elif order.status == 'SHIPPING' %}bg-primary
+                            {% elif order.status == 'DELIVERED' %}bg-success
+                            {% elif order.status == 'CANCELLED' %}bg-danger
+                            {% endif %}">
+                            {{ order.get_status_display }}
+                        </span>
+                    </div>
+                    <div class="order-info-row">
+                        <div class="order-info-label">Дата</div>
+                        <div class="order-info-value">{{ order.created_at|date:"d.m.Y H:i" }}</div>
+                    </div>
+                    <div class="order-info-row">
+                        <div class="order-info-label">Адрес доставки</div>
+                        <div class="order-info-value">{{ order.get_full_address }}</div>
+                        {% if order.delivery_lat and order.delivery_lng %}
+                        <small class="text-success"><i class="fas fa-check-circle"></i> Координаты определены</small>
+                        {% endif %}
+                    </div>
+                    <div class="order-info-row">
+                        <div class="order-info-label">Оплата</div>
+                        <div class="order-info-value">
+                            {{ order.get_payment_method_display }}
+                            {% if order.payment_card %}
+                            <span class="text-muted d-block mt-1">{{ order.payment_card.get_display_number }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% if order.promo_code %}
+                    <div class="order-info-row">
+                        <div class="order-info-label">Промокод</div>
+                        <div class="order-info-value">
+                            <span class="text-success"><i class="fas fa-tag me-1"></i> {{ order.promo_code.code }}</span>
+                            {% if order.discount_amount and order.discount_amount > 0 %}
+                            <span class="text-muted d-block mt-1">Скидка: −{{ order.discount_amount|floatformat:0 }} ₽</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if order.delivery_comment_courier %}
+                    <div class="order-info-row">
+                        <div class="order-info-label">Комментарий для курьера</div>
+                        <div class="alert alert-info order-comment-block mb-0">{{ order.delivery_comment_courier }}</div>
+                    </div>
+                    {% endif %}
+                    {% if order.delivery_comment_picker %}
+                    <div class="order-info-row">
+                        <div class="order-info-label">Комментарий для сборщика</div>
+                        <div class="alert alert-warning order-comment-block mb-0">{{ order.delivery_comment_picker }}</div>
+                    </div>
+                    {% endif %}
+
+                    <hr class="order-summary-divider">
+                    <div class="order-summary-row">
+                        <span>Товары</span>
+                        <span>{{ order.calculate_total|floatformat:0 }} ₽</span>
+                    </div>
+                    {% if order.discount_amount and order.discount_amount > 0 %}
+                    <div class="order-summary-row text-success">
+                        <span><i class="fas fa-tag me-1"></i> Скидка по промокоду {% if order.promo_code %}({{ order.promo_code.code }}){% endif %}</span>
+                        <span>−{{ order.discount_amount|floatformat:0 }} ₽</span>
+                    </div>
+                    {% endif %}
+                    {% if order.delivery_fee and order.delivery_fee > 0 %}
+                    <div class="order-summary-row">
+                        <span>Доставка</span>
+                        <span>{{ order.delivery_fee|floatformat:0 }} ₽</span>
+                    </div>
+                    {% endif %}
+                    {% if order.bonus_points_used > 0 %}
+                    <div class="order-summary-row text-success">
+                        <span>Списано бонусов</span>
+                        <span>−{{ order.bonus_points_used }} ₽</span>
+                    </div>
+                    {% endif %}
+                    <div class="order-summary-row order-summary-total">
+                        <span>К оплате</span>
+                        <span class="amount">{{ order.total_amount|floatformat:0 }} ₽</span>
+                    </div>
+                    {% if order.bonus_points_earned > 0 %}
+                    <div class="order-summary-row text-success mt-2">
+                        <span>Начислено бонусов</span>
+                        <span>+{{ order.bonus_points_earned }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card order-back-card">
+                <a href="{% url 'cart:order_list' %}" class="btn btn-outline-success">
+                    <i class="fas fa-arrow-left me-2"></i>К списку заказов
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

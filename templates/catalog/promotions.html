@@ -1,0 +1,208 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Акции и скидки{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<link rel="stylesheet" href="{% static 'css/promotions.css' %}">
+<link rel="stylesheet" href="{% static 'css/swiper-novinki.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="promo-page">
+
+    <div class="promo-page__header">
+        <h1 class="promo-page__title">Акции и скидки</h1>
+        <p class="promo-page__subtitle">Выгодные предложения на любимые товары</p>
+    </div>
+
+    {% if categories %}
+    <div class="promo-filter">
+        <a href="{% url 'catalog:promotions' %}"
+           class="promo-filter__pill {% if not current_category %}promo-filter__pill--active{% endif %}">
+            Все
+        </a>
+        {% for cat in categories %}
+        <a href="{% url 'catalog:promotions' %}?category={{ cat.slug }}"
+           class="promo-filter__pill {% if current_category == cat.slug %}promo-filter__pill--active{% endif %}">
+            {{ cat.name }}
+        </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {# ── Именованные акции ── #}
+    {% for promo in promotions %}
+    <section class="promo-section mb-5">
+
+        {# Шапка акции #}
+        {% if promo.image %}
+        <div class="promo-section__banner"
+             style="background-image: url('{{ promo.image.url }}');">
+            <div class="promo-section__banner-overlay"></div>
+            <div class="promo-section__banner-content">
+                <h2 class="promo-section__title promo-section__title--light">{{ promo.name }}{% if promo.discount_percent %} <span class="badge bg-warning text-dark">−{{ promo.discount_percent }}%</span>{% endif %}</h2>
+                {% if promo.description %}
+                <p class="promo-section__desc promo-section__desc--light">{{ promo.description }}</p>
+                {% endif %}
+                {% if promo.ends_at %}
+                <span class="promo-section__dates">до {{ promo.ends_at|date:"d.m.Y" }}</span>
+                {% endif %}
+            </div>
+        </div>
+        {% else %}
+        <div class="promo-section__header">
+            <div>
+                <h2 class="promo-section__title">{{ promo.name }}{% if promo.discount_percent %} <span class="badge bg-warning text-dark">−{{ promo.discount_percent }}%</span>{% endif %}</h2>
+                {% if promo.description %}
+                <p class="promo-section__desc">{{ promo.description }}</p>
+                {% endif %}
+            </div>
+            {% if promo.ends_at %}
+            <span class="promo-section__dates">до {{ promo.ends_at|date:"d.m.Y" }}</span>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {# Слайдер товаров #}
+        {% if promo.filtered_products %}
+        <div class="swiper swiper-promo" data-promo-id="{{ promo.id }}">
+            <div class="swiper-wrapper">
+                {% for product in promo.filtered_products %}
+                <div class="swiper-slide">
+                    {% include 'includes/product_card.html' with product=product %}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
+        </div>
+        {% endif %}
+
+    </section>
+    {% endfor %}
+
+    {# ── Другие скидки ── #}
+    {% if page_obj %}
+    <section class="promo-other mb-4">
+        <div class="promo-section__header">
+            <h2 class="promo-section__title">{% if promotions %}Другие скидки{% else %}Все скидки{% endif %}</h2>
+        </div>
+
+        <div class="row">
+            {% for product in page_obj %}
+            <div class="col-6 col-md-4 col-lg-3 mb-4">
+                <div class="card promo-card h-100">
+                    <a href="{% url 'catalog:product_detail' product.slug %}" class="promo-card__img-link">
+                        <div class="promo-card__img-wrap">
+                            {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="promo-card__img">
+                            {% else %}
+                            <div class="promo-card__img-placeholder"><i class="fas fa-image"></i></div>
+                            {% endif %}
+                            <span class="promo-card__badge">−{{ product.discount_percent }}%</span>
+                        </div>
+                    </a>
+                    <div class="card-body promo-card__body d-flex flex-column">
+                        <p class="promo-card__category">{{ product.category.name }}</p>
+                        <h5 class="promo-card__name">
+                            <a href="{% url 'catalog:product_detail' product.slug %}">{{ product.name }}</a>
+                        </h5>
+                        <div class="promo-card__prices mt-auto">
+                            <span class="promo-card__price-new">{{ product.final_price|floatformat:0 }} ₽</span>
+                            <span class="promo-card__price-old">{{ product.price|floatformat:0 }} ₽</span>
+                        </div>
+                        <div class="promo-card__actions mt-2">
+                            {% if product.in_stock %}
+                            <form method="post"
+                                  action="{% url 'cart:add_to_cart' product.id %}"
+                                  class="js-add-to-cart mb-0"
+                                  data-product-id="{{ product.id }}">
+                                {% csrf_token %}
+                                <input type="hidden" name="quantity" value="1">
+                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                <button type="submit" class="btn-cart-with-text w-100">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    <span>В корзину</span>
+                                </button>
+                            </form>
+                            {% else %}
+                            <button class="btn-cart-with-text w-100" disabled>
+                                <i class="fas fa-times"></i>
+                                <span>Нет в наличии</span>
+                            </button>
+                            {% endif %}
+                            <div class="product-quantity mt-1" data-product-id="{{ product.id }}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if page_obj.has_other_pages %}
+        <nav aria-label="Пагинация" class="mt-2">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}">Назад</a>
+                </li>
+                {% endif %}
+                <li class="page-item active">
+                    <span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+                </li>
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}">Вперёд</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </section>
+
+    {% elif not promotions %}
+    <div class="promo-page__empty">
+        <i class="fas fa-tag"></i>
+        <p>{% if current_category %}В этой категории сейчас нет акций.{% else %}Сейчас акций нет.{% endif %}</p>
+        {% if current_category %}
+        <a href="{% url 'catalog:promotions' %}" class="promo-page__empty-link">Показать все акции</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var swiperConfig = {
+        slidesPerView: 1.5,
+        spaceBetween: 12,
+        freeMode: true,
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+        breakpoints: {
+            576:  { slidesPerView: 2,   spaceBetween: 16, freeMode: false },
+            768:  { slidesPerView: 3,   spaceBetween: 20, freeMode: false },
+            992:  { slidesPerView: 4,   spaceBetween: 24, freeMode: false },
+            1200: { slidesPerView: 5,   spaceBetween: 24, freeMode: false },
+        },
+    };
+
+    document.querySelectorAll('.swiper-promo').forEach(function (el) {
+        new Swiper(el, Object.assign({}, swiperConfig, {
+            navigation: {
+                nextEl: el.querySelector('.swiper-button-next'),
+                prevEl: el.querySelector('.swiper-button-prev'),
+            },
+        }));
+    });
+});
+</script>
+{% endblock %}

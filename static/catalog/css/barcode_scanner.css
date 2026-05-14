@@ -1,0 +1,302 @@
+/**
+ * Стили для сканера штрихкодов в Django Admin
+ * Адаптировано для мобильных устройств
+ */
+
+/* Кнопка сканирования */
+.barcode-scan-button-container {
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.barcode-scan-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background-color: #417690;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.barcode-scan-button:hover {
+    background-color: #205067;
+}
+
+.barcode-scan-button:active {
+    background-color: #1a3f52;
+    transform: scale(0.98);
+}
+
+.barcode-icon {
+    font-size: 18px;
+}
+
+/* Модальное окно */
+.barcode-scanner-modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.barcode-scanner-modal-content {
+    position: relative;
+    background-color: #fff;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border: none;
+    box-shadow: none;
+}
+
+/* Заголовок модального окна */
+.barcode-scanner-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background-color: #417690;
+    color: white;
+    border-bottom: 1px solid #205067;
+    flex-shrink: 0;
+}
+
+.barcode-scanner-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.barcode-scanner-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 32px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+    line-height: 1;
+}
+
+.barcode-scanner-close:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.barcode-scanner-close:active {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Тело модального окна */
+.barcode-scanner-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Контейнер сканера */
+#barcode-scanner-reader {
+    width: 100%;
+    flex: 1;
+    min-height: 300px;
+    position: relative;
+    background-color: #000;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    display: block !important;
+    visibility: visible !important;
+}
+
+/* Убеждаемся, что видео видно */
+#barcode-scanner-reader video {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+    visibility: visible !important;
+    background-color: #000;
+}
+
+/* Контейнер для html5-qrcode */
+#barcode-scanner-reader > div {
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
+}
+
+/* Статус сканирования */
+.barcode-scanner-status {
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    background-color: #f8f9fa;
+    color: #333;
+    border: 1px solid #dee2e6;
+}
+
+.barcode-scanner-status.barcode-scanner-success {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+}
+
+.barcode-scanner-status.barcode-scanner-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+}
+
+/* Кнопки действий */
+.barcode-scanner-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.barcode-scanner-btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 150px;
+}
+
+.barcode-scanner-btn-stop {
+    background-color: #dc3545;
+    color: white;
+}
+
+.barcode-scanner-btn-stop:hover {
+    background-color: #c82333;
+}
+
+.barcode-scanner-btn-stop:active {
+    background-color: #bd2130;
+    transform: scale(0.98);
+}
+
+/* Адаптация для мобильных устройств */
+@media screen and (max-width: 768px) {
+    .barcode-scanner-modal-content {
+        padding: 0;
+    }
+
+    .barcode-scanner-header {
+        padding: 12px 16px;
+    }
+
+    .barcode-scanner-header h3 {
+        font-size: 16px;
+    }
+
+    .barcode-scanner-close {
+        font-size: 28px;
+        width: 32px;
+        height: 32px;
+    }
+
+    .barcode-scanner-body {
+        padding: 16px;
+    }
+
+    #barcode-scanner-reader {
+        min-height: 250px;
+    }
+
+    .barcode-scanner-status {
+        font-size: 13px;
+        padding: 10px 12px;
+    }
+
+    .barcode-scanner-btn {
+        padding: 10px 20px;
+        font-size: 14px;
+        min-width: 120px;
+    }
+
+    .barcode-scan-button {
+        padding: 8px 14px;
+        font-size: 13px;
+    }
+}
+
+/* Портретная ориентация на мобильных */
+@media screen and (max-width: 480px) and (orientation: portrait) {
+    #barcode-scanner-reader {
+        min-height: 300px;
+    }
+}
+
+/* Ландшафтная ориентация на мобильных */
+@media screen and (max-width: 900px) and (orientation: landscape) {
+    .barcode-scanner-header {
+        padding: 8px 12px;
+    }
+
+    .barcode-scanner-header h3 {
+        font-size: 14px;
+    }
+
+    .barcode-scanner-body {
+        padding: 12px;
+    }
+
+    #barcode-scanner-reader {
+        min-height: 200px;
+    }
+}
+
+/* Стили для библиотеки html5-qrcode - дополнительные */
+#barcode-scanner-reader canvas {
+    display: none !important;
+}
+
+/* Видоискатель html5-qrcode */
+#barcode-scanner-reader #qr-shaded-region {
+    border-color: rgba(0, 0, 0, 0.3) !important;
+}
+
+#barcode-scanner-reader #qr-shaded-region > div {
+    border-color: #417690 !important;
+    border-width: 3px !important;
+}
+
+/* Улучшение видимости видоискателя на мобильных */
+@media screen and (max-width: 768px) {
+    #barcode-scanner-reader {
+        border-radius: 0;
+    }
+}

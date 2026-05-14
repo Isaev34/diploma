@@ -1,0 +1,59 @@
+{% load static %}
+<div id="support-widget-root"
+     class="support-widget"
+     data-auth="{% if user.is_authenticated %}1{% else %}0{% endif %}">
+    <button type="button"
+            id="support-widget-toggle"
+            class="support-widget__fab"
+            aria-expanded="false"
+            aria-controls="support-widget-panel">
+        <i class="fas fa-comments" aria-hidden="true"></i>
+        <span class="support-widget__fab-text">Чат</span>
+    </button>
+    <div id="support-widget-panel"
+         class="support-widget__panel"
+         hidden
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="support-widget-title">
+        <div class="support-widget__panel-inner">
+            <header class="support-widget__header">
+                <div>
+                    <strong id="support-widget-title">Поддержка</strong>
+                    
+                </div>
+                <button type="button"
+                        id="support-widget-close"
+                        class="support-widget__icon-btn"
+                        aria-label="Закрыть чат">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
+            </header>
+
+            <div id="support-widget-guest" class="support-widget__guest" hidden>
+                <p class="mb-3">Войдите, чтобы написать в поддержку и видеть ответы по вашим заказам.</p>
+                <a href="{% url 'users:login' %}?next={{ request.get_full_path|urlencode }}" class="btn btn-success w-100">Войти</a>
+            </div>
+
+            <div id="support-widget-chat" class="support-widget__chat" hidden>
+                <label class="support-widget__label" for="support-widget-order">Заказ (необязательно)</label>
+                <select id="support-widget-order" class="form-select form-select-sm support-widget__select">
+                    <option value="">Общий вопрос</option>
+                </select>
+                <div id="support-widget-messages" class="support-widget__messages" tabindex="-1"></div>
+                <div class="support-widget__composer">
+                    <textarea id="support-widget-input"
+                              rows="2"
+                              maxlength="2000"
+                              class="form-control form-control-sm"
+                              placeholder="Напишите сообщение…"></textarea>
+                    <button type="button" id="support-widget-send" class="btn btn-success">
+                        <i class="fas fa-paper-plane me-1" aria-hidden="true"></i>Отправить
+                    </button>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}" id="support-csrf-token">

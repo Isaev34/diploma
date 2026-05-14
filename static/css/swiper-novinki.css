@@ -1,0 +1,81 @@
+/* Swiper карусели товаров — минималистичные стрелки, overflow для теней */
+
+.novinki-section,
+.sale-section {
+    padding-bottom: 1rem;
+}
+
+/* Не обрезать тени карточек — отступ для shadow */
+.swiper-novinki,
+.swiper-sale {
+    margin: 0 -4px;
+    padding: 4px;
+}
+
+.swiper-novinki .swiper-slide,
+.swiper-sale .swiper-slide {
+    height: auto;
+    box-sizing: border-box;
+}
+
+/* Стрелки — минималистичные серые/чёрные кружки */
+.swiper-novinki .swiper-button-prev,
+.swiper-novinki .swiper-button-next,
+.swiper-sale .swiper-button-prev,
+.swiper-sale .swiper-button-next {
+    width: 44px;
+    height: 44px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border-radius: 50%;
+    transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+.swiper-novinki .swiper-button-prev:after,
+.swiper-novinki .swiper-button-next:after,
+.swiper-sale .swiper-button-prev:after,
+.swiper-sale .swiper-button-next:after {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.swiper-novinki .swiper-button-prev:hover,
+.swiper-novinki .swiper-button-next:hover,
+.swiper-sale .swiper-button-prev:hover,
+.swiper-sale .swiper-button-next:hover {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+/* Скрыть стрелки на мобильных */
+@media (max-width: 767.98px) {
+    .swiper-novinki .swiper-button-prev,
+    .swiper-novinki .swiper-button-next,
+    .swiper-sale .swiper-button-prev,
+    .swiper-sale .swiper-button-next {
+        display: none !important;
+    }
+}
+
+/* Показать и сделать активными при наведении на ПК */
+@media (min-width: 768px) {
+    .swiper-novinki .swiper-button-prev,
+    .swiper-novinki .swiper-button-next,
+    .swiper-sale .swiper-button-prev,
+    .swiper-sale .swiper-button-next {
+        opacity: 0.6;
+    }
+
+    .swiper-novinki:hover .swiper-button-prev,
+    .swiper-novinki:hover .swiper-button-next,
+    .swiper-sale:hover .swiper-button-prev,
+    .swiper-sale:hover .swiper-button-next {
+        opacity: 1;
+    }
+
+    .swiper-novinki .swiper-button-prev.swiper-button-disabled,
+    .swiper-novinki .swiper-button-next.swiper-button-disabled,
+    .swiper-sale .swiper-button-prev.swiper-button-disabled,
+    .swiper-sale .swiper-button-next.swiper-button-disabled {
+        opacity: 0.2;
+    }
+}

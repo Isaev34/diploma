@@ -1,0 +1,75 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Мои заказы{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/order-list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="order-list-page">
+    <h1 class="order-list-title">Мои заказы</h1>
+
+    {% if orders %}
+    <div class="card orders-card">
+        <div class="card-body">
+            {% for order in orders %}
+            <div class="order-row">
+                <span class="order-id">#{{ order.id }}</span>
+                <span class="order-date">{{ order.created_at|date:"d.m.Y H:i" }}</span>
+                <span class="order-status badge
+                    {% if order.status == 'COOKING' %}bg-warning
+                    {% elif order.status == 'READY' %}bg-info
+                    {% elif order.status == 'SHIPPING' %}bg-primary
+                    {% elif order.status == 'DELIVERED' %}bg-success
+                    {% elif order.status == 'CANCELLED' %}bg-danger
+                    {% endif %}">
+                    {{ order.get_status_display }}
+                </span>
+                <span class="order-address" title="{{ order.get_full_address }}">{{ order.get_full_address|truncatechars:35 }}</span>
+                <div class="order-amount">
+                    {{ order.total_amount|floatformat:0 }} ₽
+                    {% if order.bonus_points_used > 0 %}
+                    <span class="bonus-used d-block">−{{ order.bonus_points_used }} бон.</span>
+                    {% endif %}
+                </div>
+                <a href="{% url 'cart:order_detail' order.id %}" class="order-link">
+                    Подробнее <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% if orders.has_other_pages %}
+    <nav aria-label="Пагинация">
+        <ul class="pagination justify-content-center">
+            {% if orders.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ orders.previous_page_number }}">Назад</a>
+            </li>
+            {% endif %}
+            <li class="page-item active">
+                <span class="page-link">{{ orders.number }} / {{ orders.paginator.num_pages }}</span>
+            </li>
+            {% if orders.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ orders.next_page_number }}">Вперёд</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <div class="order-list-empty">
+        <div class="order-list-empty-icon"><i class="fas fa-box-open"></i></div>
+        <h3 class="order-list-empty-title">Заказов пока нет</h3>
+        <p class="order-list-empty-text">Начните покупки — здесь появятся ваши заказы</p>
+        <a href="{% url 'catalog:product_list' %}" class="btn btn-success btn-lg">
+            <i class="fas fa-shopping-bag me-2"></i>Перейти к товарам
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

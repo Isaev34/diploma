@@ -1,0 +1,20 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="text-center mb-0">Проверьте почту</h3>
+      </div>
+      <div class="card-body text-center">
+        <p class="mb-3">На указанный при регистрации адрес отправлено письмо со ссылкой для подтверждения.</p>
+        <p class="mb-3 text-muted small">Если письма нет, загляните в «Спам». Можно <a href="{% url 'users:resend_verification' %}">запросить отправку повторно</a>.</p>
+        <a href="{% url 'users:login' %}" class="btn btn-primary">Ко входу</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

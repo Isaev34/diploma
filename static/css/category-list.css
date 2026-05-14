@@ -1,0 +1,160 @@
+/* ========== /categories/ ========== */
+
+/* ── Обёртка: flex sidebar + content ── */
+.catlist-layout {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+/* ── Сайдбар ── */
+.catlist-sidebar {
+    flex: 0 0 220px;
+    width: 220px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, .07);
+    padding: 1rem 0.75rem;
+    position: sticky;
+    top: calc(var(--navbar-height, 64px) + 40px + 1rem);
+    max-height: calc(100vh - var(--navbar-height, 64px) - 40px - 2rem);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, .1) transparent;
+}
+
+.catlist-sidebar::-webkit-scrollbar { width: 4px; }
+.catlist-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, .12);
+    border-radius: 4px;
+}
+
+.catlist-sidebar__heading {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: #9ca3af;
+    margin: 0 0 .6rem .25rem;
+}
+
+.catlist-sidebar__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.catlist-sidebar__item {
+    display: block;
+    padding: .45rem .6rem;
+    border-radius: 9px;
+    text-decoration: none;
+    color: #1a1a1a;
+    font-size: .875rem;
+    font-weight: 500;
+    border-left: 3px solid transparent;
+    transition: background .15s, color .15s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.catlist-sidebar__item:hover {
+    background: rgba(40, 167, 69, .07);
+    color: #28a745;
+    text-decoration: none;
+}
+
+.catlist-sidebar__item--active {
+    background: rgba(40, 167, 69, .12);
+    color: #28a745;
+    font-weight: 600;
+    border-left-color: #28a745;
+}
+
+/* ── Основная область ── */
+.catlist-content {
+    flex: 1;
+    min-width: 0;
+}
+
+/* ── Сетка карточек: 3 колонки (карточки в стиле product-card из theme.css) ── */
+.catlist-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.125rem;
+}
+
+/* ── Карточка категории: тот же визуальный язык, что у товаров ── */
+.catlist-category-card {
+    color: inherit;
+}
+
+.catlist-category-card:hover {
+    color: inherit;
+}
+
+.catlist-category-card__media {
+    height: 168px;
+    flex-shrink: 0;
+    background-size: cover;
+    background-position: center;
+    background-color: #f8f8f8;
+    border-radius: 12px 12px 0 0;
+    overflow: hidden;
+}
+
+.catlist-category-card__media--placeholder {
+    background-image: linear-gradient(135deg, #d1fae5 0%, #6ee7b7 50%, #34d399 100%);
+}
+
+.catlist-empty {
+    padding: 3rem 1rem;
+    text-align: center;
+    color: #6c757d;
+}
+
+/* ── Адаптив ── */
+@media (max-width: 991.98px) {
+    .catlist-layout {
+        flex-direction: column;
+    }
+
+    /* Только страница /categories/: на мобильных сайдбар скрыт (дублирует сетку) */
+    .catlist-page .catlist-layout > .catlist-sidebar {
+        display: none;
+    }
+
+    .catlist-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 479.98px) {
+    .catlist-grid {
+        gap: .75rem;
+    }
+}
+
+/* ── Тёмная тема ── */
+body.dark-theme .catlist-sidebar {
+    background: #1e293b;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, .3);
+}
+
+body.dark-theme .catlist-sidebar__heading { color: #64748b; }
+
+body.dark-theme .catlist-sidebar__item {
+    color: #e2e8f0;
+}
+
+body.dark-theme .catlist-sidebar__item:hover {
+    background: rgba(74, 222, 128, .08);
+    color: #4ade80;
+}
+
+body.dark-theme .catlist-sidebar__item--active {
+    background: rgba(74, 222, 128, .12);
+    color: #4ade80;
+    border-left-color: #4ade80;
+}

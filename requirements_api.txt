@@ -1,0 +1,9 @@
+# REST API dependencies
+dadata>=26.0.0
+djangorestframework>=3.14.0
+djangorestframework-simplejwt>=5.2.2
+drf-spectacular>=0.26.5
+django-filter>=23.3
+django-jazzmin>=3.0.0
+
+

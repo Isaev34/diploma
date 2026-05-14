@@ -1,0 +1,112 @@
+/* Страница товара: цены как на карточках, галерея с отступами и ограничением размера */
+
+.product-detail-page__media-col {
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+}
+
+@media (min-width: 768px) {
+    .product-detail-page__media-col {
+        padding-left: 0.5rem;
+        padding-right: 0.75rem;
+    }
+}
+
+.product-detail-gallery {
+    width: 100%;
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.product-detail-gallery__frame {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 1rem 1.25rem;
+    min-height: 240px;
+    max-height: min(72vh, 520px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.product-detail-gallery__frame--placeholder {
+    min-height: 320px;
+}
+
+.product-detail-gallery__img {
+    display: block;
+    max-width: 100%;
+    max-height: min(68vh, 480px);
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+/* Цены: скидочная — красная (#c00 как .current-price), процент — жёлтый бейдж как на карточках */
+.product-detail-price {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 0.75rem;
+}
+
+.product-detail-price .current-price {
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+.product-detail-price .old-price {
+    font-size: 1.1rem;
+}
+
+.product-detail-savings {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #c00;
+}
+
+body.dark-theme .product-detail-savings {
+    color: #f87171;
+}
+
+.product-detail-discount-pill {
+    display: inline-block;
+    background: #ffc107;
+    color: #000;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    line-height: 1.2;
+    vertical-align: middle;
+}
+
+.product-detail-price-final--regular {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+body.dark-theme .product-detail-gallery__frame {
+    background: var(--card-bg, #1e293b);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+}
+
+body.dark-theme .product-detail-price-final--regular {
+    color: var(--body-text, #e2e8f0);
+}
+
+body.dark-theme .product-detail-price .current-price {
+    color: #fca5a5;
+}
+
+body.dark-theme .product-detail-price .old-price {
+    color: #94a3b8;
+}
+
+body.dark-theme .product-detail-gallery__frame--placeholder {
+    background: var(--card-bg, #1e293b);
+}

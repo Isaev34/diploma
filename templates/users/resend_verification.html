@@ -1,0 +1,31 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Повторное письмо{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-4">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="text-center mb-0">Письмо с подтверждением</h3>
+      </div>
+      <div class="card-body">
+        <p class="small text-muted">Укажите e-mail, который вы вводили при регистрации.</p>
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label" for="email">E-mail</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+          </div>
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary">Отправить ссылку</button>
+          </div>
+        </form>
+      </div>
+      <div class="card-footer text-center">
+        <a href="{% url 'users:login' %}">← Назад ко входу</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}{{ category.name }}{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/category-detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="category-detail-page">
+
+    <div class="cat-content__top">
+        <h1 class="category-title">{{ category.name }}</h1>
+
+        <form method="get" class="category-search-form">
+            <div class="input-group">
+                <div class="product-suggest-wrap position-relative flex-grow-1">
+                    <input type="text"
+                           class="form-control"
+                           id="search"
+                           name="search"
+                           placeholder="Поиск в категории..."
+                           value="{{ search_query }}"
+                           aria-label="Поиск в категории"
+                           data-product-suggest
+                           data-suggest-category="{{ category.slug }}"
+                           autocomplete="off">
+                </div>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-search"></i>
+                </button>
+                {% if search_query %}
+                <a href="{% url 'catalog:category_detail' category.slug %}" class="btn btn-outline-secondary">×</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    {% if page_obj %}
+    <div class="row g-3">
+        {% for product in page_obj %}
+        <div class="col-6 col-md-4 col-xl-3">
+            {% include 'includes/product_card.html' %}
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Пагинация" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}">Назад</a>
+            </li>
+            {% endif %}
+            <li class="page-item active">
+                <span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+            </li>
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}">Вперёд</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <p class="category-empty">
+        {% if search_query %}
+        Ничего не найдено. <a href="{% url 'catalog:category_detail' category.slug %}">Сбросить поиск</a>
+        {% else %}
+        В этой категории пока нет товаров.
+        {% endif %}
+    </p>
+    {% endif %}
+
+</div>
+{% endblock %}

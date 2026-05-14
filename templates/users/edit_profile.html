@@ -1,0 +1,109 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Редактирование профиля{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="mb-0">
+                    <i class="fas fa-edit text-primary"></i> Редактирование профиля
+                </h3>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <h5 class="mb-3">Личные данные</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="first_name" class="form-label">Имя</label>
+                            <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="last_name" class="form-label">Фамилия</label>
+                            <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.last_name }}">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_email" class="form-label">Email *</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="text-danger">{{ form.email.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_phone" class="form-label">Телефон</label>
+                        {{ form.phone }}
+                        {% if form.phone.errors %}
+                            <div class="text-danger">{{ form.phone.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <hr class="my-4">
+                    <h5 class="mb-3">Адрес доставки</h5>
+                    <div class="mb-3">
+                        <label for="id_delivery_city" class="form-label">Город</label>
+                        {{ form.delivery_city }}
+                        {% if form.delivery_city.errors %}
+                            <div class="text-danger">{{ form.delivery_city.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_delivery_street" class="form-label">Улица</label>
+                        {{ form.delivery_street }}
+                        {% if form.delivery_street.errors %}
+                            <div class="text-danger">{{ form.delivery_street.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="id_delivery_building" class="form-label">Дом</label>
+                            {{ form.delivery_building }}
+                            {% if form.delivery_building.errors %}
+                                <div class="text-danger">{{ form.delivery_building.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="id_delivery_entrance" class="form-label">Номер подъезда</label>
+                            {{ form.delivery_entrance }}
+                            {% if form.delivery_entrance.errors %}
+                                <div class="text-danger">{{ form.delivery_entrance.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="id_delivery_floor" class="form-label">Этаж</label>
+                            {{ form.delivery_floor }}
+                            {% if form.delivery_floor.errors %}
+                                <div class="text-danger">{{ form.delivery_floor.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="id_delivery_apartment" class="form-label">Квартира/Офис</label>
+                            {{ form.delivery_apartment }}
+                            {% if form.delivery_apartment.errors %}
+                                <div class="text-danger">{{ form.delivery_apartment.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Сохраненный адрес можно будет использовать при оформлении заказа.
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'users:profile' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Назад
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Сохранить
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

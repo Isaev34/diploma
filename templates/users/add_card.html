@@ -1,0 +1,90 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Добавить карту{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="mb-0">
+                    <i class="fas fa-credit-card text-primary"></i> Добавить карту
+                </h3>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_card_number" class="form-label">Номер карты *</label>
+                        {{ form.card_number }}
+                        {% if form.card_number.errors %}
+                            <div class="text-danger">{{ form.card_number.errors }}</div>
+                        {% endif %}
+                        <div class="form-text">{{ form.card_number.help_text }}</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_card_type" class="form-label">Тип карты *</label>
+                        {{ form.card_type }}
+                        {% if form.card_type.errors %}
+                            <div class="text-danger">{{ form.card_type.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_cardholder_name" class="form-label">Имя держателя карты *</label>
+                        {{ form.cardholder_name }}
+                        {% if form.cardholder_name.errors %}
+                            <div class="text-danger">{{ form.cardholder_name.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            {{ form.is_default }}
+                            <label class="form-check-label" for="id_is_default">
+                                {{ form.is_default.label }}
+                            </label>
+                        </div>
+                        {% if form.is_default.errors %}
+                            <div class="text-danger">{{ form.is_default.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> 
+                        <strong>Внимание:</strong> Для демонстрации сохраняются только последние 4 цифры номера карты. 
+                        Полный номер карты не хранится в системе.
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'users:cards' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Назад
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Сохранить карту
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Форматирование номера карты при вводе
+document.addEventListener('DOMContentLoaded', function() {
+    const cardNumberInput = document.getElementById('id_card_number');
+    if (cardNumberInput) {
+        cardNumberInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s/g, '');
+            let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+            e.target.value = formattedValue;
+        });
+    }
+});
+</script>
+{% endblock %}
+
+
+

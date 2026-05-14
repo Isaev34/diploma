@@ -1,0 +1,80 @@
+/* Минимальные отступы на мобильной версии */
+
+@media (max-width: 575.98px) {
+    /* Контейнер — минимальные боковые отступы */
+    .container {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    /* Секции — меньше отступов сверху/снизу */
+    section.mb-5,
+    .sale-section,
+    .novinki-section,
+    .categories-section {
+        margin-bottom: 1rem !important;
+        padding-top: 0.5rem;
+    }
+
+    .novinki-section,
+    .sale-section {
+        padding-bottom: 0.25rem;
+    }
+
+    /* Сетка категорий — минимальный gap */
+    .bento-grid {
+        gap: 6px;
+    }
+
+    .bento-card {
+        padding: 10px;
+    }
+
+    .categories-section .container {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    /* Заголовки секций */
+    .section-header {
+        margin-bottom: 0.75rem !important;
+    }
+
+    .section-header.mb-4 {
+        margin-bottom: 0.75rem !important;
+    }
+
+    /* Swiper — меньше отступов */
+    .swiper-novinki,
+    .swiper-sale {
+        margin: 0 -4px;
+        padding: 2px;
+    }
+
+    /* Features section */
+    .features-section {
+        padding-top: 1.5rem !important;
+        padding-bottom: 1.5rem !important;
+    }
+
+    .features-section .row {
+        --bs-gutter-x: 0.5rem;
+        --bs-gutter-y: 0.5rem;
+    }
+
+    /* Hero */
+    .hero-wrapper {
+        margin-bottom: 1rem !important;
+    }
+
+    /* Карточки товаров — минимальные отступы */
+    .row.g-4 {
+        --bs-gutter-x: 0.5rem;
+        --bs-gutter-y: 0.5rem;
+    }
+
+    /* h1, h2 на мобильных */
+    h1.mb-4 {
+        margin-bottom: 1rem !important;
+    }
+}

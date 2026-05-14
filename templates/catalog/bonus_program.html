@@ -1,0 +1,356 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Бонусная программа — LogiDrive{% endblock %}
+
+{% block extra_css %}
+<style>
+    .bonus-hero {
+        background: linear-gradient(135deg, #1a6e34 0%, #28a745 60%, #34ce57 100%);
+        border-radius: 20px;
+        color: #fff;
+        padding: 56px 48px;
+        margin-bottom: 40px;
+        display: flex;
+        align-items: center;
+        gap: 40px;
+        overflow: hidden;
+        position: relative;
+    }
+    .bonus-hero::after {
+        content: '';
+        position: absolute;
+        right: -60px;
+        top: -60px;
+        width: 280px;
+        height: 280px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.07);
+    }
+    .bonus-hero__icon {
+        font-size: 80px;
+        flex-shrink: 0;
+        line-height: 1;
+        position: relative;
+        z-index: 1;
+    }
+    .bonus-hero__text { position: relative; z-index: 1; }
+    .bonus-hero__title {
+        font-size: 2.2rem;
+        font-weight: 800;
+        margin-bottom: 12px;
+    }
+    .bonus-hero__subtitle {
+        font-size: 1.15rem;
+        opacity: 0.92;
+        margin-bottom: 0;
+    }
+    .bonus-balance-card {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: #fff;
+        border-radius: 16px;
+        padding: 28px 32px;
+        text-align: center;
+        box-shadow: 0 8px 32px rgba(40,167,69,0.25);
+    }
+    .bonus-balance-card__label { font-size: 0.95rem; opacity: 0.85; margin-bottom: 6px; }
+    .bonus-balance-card__amount { font-size: 3rem; font-weight: 800; line-height: 1; }
+    .bonus-balance-card__unit { font-size: 1.1rem; opacity: 0.85; }
+
+    .bonus-step-card {
+        background: var(--bs-body-bg, #fff);
+        border: 1px solid var(--bs-border-color, #e9ecef);
+        border-radius: 16px;
+        padding: 28px 24px;
+        height: 100%;
+        transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .bonus-step-card:hover {
+        box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+        transform: translateY(-3px);
+    }
+    .bonus-step-card__num {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: #28a745;
+        color: #fff;
+        font-size: 1.3rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 16px;
+    }
+    .bonus-step-card__title { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+    .bonus-step-card__text { font-size: 0.95rem; color: var(--bs-secondary-color, #6c757d); margin-bottom: 0; }
+
+    .bonus-table th { white-space: nowrap; background: rgba(40,167,69,0.08); }
+    .bonus-table td { vertical-align: middle; }
+
+    .bonus-faq .accordion-button:not(.collapsed) {
+        color: #28a745;
+        background-color: rgba(40,167,69,0.06);
+        box-shadow: none;
+    }
+    .bonus-faq .accordion-button:focus { box-shadow: none; }
+
+    .bonus-cta {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9f7ee 100%);
+        border-radius: 16px;
+        padding: 40px 32px;
+        text-align: center;
+    }
+    .dark-theme .bonus-cta {
+        background: linear-gradient(135deg, #1e1e1e 0%, #1a2e20 100%);
+    }
+    .dark-theme .bonus-step-card {
+        background: #2a2a2a;
+        border-color: #3a3a3a;
+    }
+    @media (max-width: 767px) {
+        .bonus-hero { flex-direction: column; padding: 32px 24px; text-align: center; }
+        .bonus-hero__icon { font-size: 56px; }
+        .bonus-hero__title { font-size: 1.6rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bonus-page">
+
+    <!-- Hero -->
+    <div class="bonus-hero mb-4">
+        <div class="bonus-hero__icon">🎁</div>
+        <div class="bonus-hero__text">
+            <h1 class="bonus-hero__title">Бонусная программа</h1>
+            <p class="bonus-hero__subtitle">
+                Получайте 5% бонусами с каждого заказа и тратьте их на следующие покупки.<br>
+                Чем больше покупаете — тем больше экономите!
+            </p>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+
+        <!-- Баланс -->
+        {% if user.is_authenticated %}
+        <div class="col-md-4">
+            <div class="bonus-balance-card h-100 d-flex flex-column justify-content-center">
+                <p class="bonus-balance-card__label">Ваш баланс бонусов</p>
+                <div class="bonus-balance-card__amount">{{ bonus_points }}</div>
+                <div class="bonus-balance-card__unit">бонусных баллов</div>
+                <div class="mt-3">
+                    <small style="opacity:0.8;">1 балл = 1 рубль при оплате заказа</small>
+                </div>
+                <a href="{% url 'catalog:product_list' %}" class="btn btn-light mt-4 fw-semibold">
+                    Перейти к покупкам
+                </a>
+            </div>
+        </div>
+        <div class="col-md-8">
+        {% else %}
+        <div class="col-12">
+        {% endif %}
+            <!-- Как это работает -->
+            <div class="row g-3 h-100">
+                <div class="col-sm-6 col-lg-3">
+                    <div class="bonus-step-card">
+                        <div class="bonus-step-card__num">1</div>
+                        <div class="bonus-step-card__title">Сделайте заказ</div>
+                        <p class="bonus-step-card__text">Оформите заказ на любую сумму в нашем магазине.</p>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="bonus-step-card">
+                        <div class="bonus-step-card__num">2</div>
+                        <div class="bonus-step-card__title">Получите 5%</div>
+                        <p class="bonus-step-card__text">После доставки на ваш счёт начисляется 5% от суммы заказа бонусами.</p>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="bonus-step-card">
+                        <div class="bonus-step-card__num">3</div>
+                        <div class="bonus-step-card__title">Накапливайте</div>
+                        <p class="bonus-step-card__text">Бонусы хранятся на вашем счёте и не сгорают.</p>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="bonus-step-card">
+                        <div class="bonus-step-card__num">4</div>
+                        <div class="bonus-step-card__title">Тратьте</div>
+                        <p class="bonus-step-card__text">При оформлении следующего заказа спишите бонусы вместо рублей.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Таблица начисления -->
+    <section class="mb-5">
+        <h2 class="fw-bold mb-3">Условия начисления</h2>
+        <div class="table-responsive">
+            <table class="table bonus-table table-bordered rounded overflow-hidden">
+                <thead>
+                    <tr>
+                        <th>Сумма заказа</th>
+                        <th>Начислено бонусов</th>
+                        <th>Пример</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Любая сумма</td>
+                        <td><strong class="text-success">5%</strong> от суммы заказа</td>
+                        <td>Заказ на 1 000 ₽ → <strong>50 бонусов</strong></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="text-muted" style="font-size:0.9rem;">
+                            <i class="fas fa-info-circle text-primary me-1"></i>
+                            Бонусы начисляются после того, как заказ получен покупателем (статус «Доставлен»).
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Правила списания -->
+    <section class="mb-5">
+        <h2 class="fw-bold mb-3">Как потратить бонусы</h2>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex align-items-start gap-3 px-0">
+                        <i class="fas fa-check-circle text-success mt-1" style="font-size:1.2rem;"></i>
+                        <div>
+                            <strong>При оформлении заказа</strong> укажите количество бонусов, которые хотите списать.
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-start gap-3 px-0">
+                        <i class="fas fa-check-circle text-success mt-1" style="font-size:1.2rem;"></i>
+                        <div>
+                            <strong>1 бонус = 1 рубль.</strong> Оплачивайте бонусами до 100% стоимости товаров.
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-start gap-3 px-0">
+                        <i class="fas fa-check-circle text-success mt-1" style="font-size:1.2rem;"></i>
+                        <div>
+                            Бонусы можно <strong>комбинировать с промокодами</strong>.
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-start gap-3 px-0">
+                        <i class="fas fa-info-circle text-primary mt-1" style="font-size:1.2rem;"></i>
+                        <div>
+                            За заказ, оплаченный бонусами, новые бонусы начисляются только на сумму, оплаченную рублями.
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <div class="bonus-cta h-100 d-flex flex-column justify-content-center align-items-center">
+                    <i class="fas fa-shopping-basket text-success mb-3" style="font-size:3rem;"></i>
+                    <p class="fw-semibold mb-1" style="font-size:1.1rem;">Готовы копить бонусы?</p>
+                    <p class="text-muted mb-3">Начните прямо сейчас — просто сделайте заказ.</p>
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'catalog:product_list' %}" class="btn btn-success btn-lg px-4">
+                        <i class="fas fa-arrow-right me-2"></i>Перейти к товарам
+                    </a>
+                    {% else %}
+                    <a href="{% url 'users:signup' %}" class="btn btn-success btn-lg px-4">
+                        <i class="fas fa-user-plus me-2"></i>Зарегистрироваться
+                    </a>
+                    <a href="{% url 'users:login' %}" class="btn btn-outline-success mt-2 px-4">
+                        Уже есть аккаунт? Войти
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="mb-5">
+        <h2 class="fw-bold mb-3">Частые вопросы</h2>
+        <div class="accordion bonus-faq" id="bonusFaq">
+
+            <div class="accordion-item border rounded mb-2">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed fw-semibold" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#faq1">
+                        Когда начисляются бонусы?
+                    </button>
+                </h3>
+                <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#bonusFaq">
+                    <div class="accordion-body text-muted">
+                        Бонусы начисляются автоматически после того, как заказ переходит в статус
+                        <strong>«Доставлен»</strong>. Обычно это происходит в тот же день, что и доставка.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item border rounded mb-2">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed fw-semibold" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#faq2">
+                        Сгорают ли бонусы?
+                    </button>
+                </h3>
+                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#bonusFaq">
+                    <div class="accordion-body text-muted">
+                        Нет. Накопленные бонусы хранятся на вашем счёте бессрочно и не сгорают.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item border rounded mb-2">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed fw-semibold" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#faq3">
+                        Можно ли оплатить заказ полностью бонусами?
+                    </button>
+                </h3>
+                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#bonusFaq">
+                    <div class="accordion-body text-muted">
+                        Да. Вы можете списать бонусами до 100% стоимости товаров в заказе.
+                        Стоимость доставки оплачивается рублями.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item border rounded mb-2">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed fw-semibold" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#faq4">
+                        Где посмотреть баланс бонусов?
+                    </button>
+                </h3>
+                <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#bonusFaq">
+                    <div class="accordion-body text-muted">
+                        Баланс отображается в вашем
+                        <a href="{% url 'users:profile' %}" class="text-success">личном кабинете</a>
+                        и на странице оформления заказа.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item border rounded mb-2">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed fw-semibold" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#faq5">
+                        Что будет с бонусами при возврате заказа?
+                    </button>
+                </h3>
+                <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#bonusFaq">
+                    <div class="accordion-body text-muted">
+                        При отмене или возврате заказа начисленные за него бонусы аннулируются,
+                        а потраченные бонусы возвращаются на счёт.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+</div>
+{% endblock %}

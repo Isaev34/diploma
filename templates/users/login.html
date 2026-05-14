@@ -1,0 +1,47 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Вход{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="text-center mb-0">
+                    <i class="fas fa-sign-in-alt text-primary"></i> Вход в систему
+                </h3>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Имя пользователя</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Пароль</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i> Войти
+                        </button>
+                    </div>
+                </form>
+                <p class="text-center small mb-0 mt-2">
+                    <a href="{% url 'users:password_reset' %}" class="text-decoration-none">Забыли пароль?</a>
+                    ·
+                    <a href="{% url 'users:resend_verification' %}" class="text-decoration-none">Письмо не пришло</a>
+                </p>
+            </div>
+            <div class="card-footer text-center">
+                <p class="mb-0">
+                    Нет аккаунта? 
+                    <a href="{% url 'users:signup' %}" class="text-decoration-none">Зарегистрироваться</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

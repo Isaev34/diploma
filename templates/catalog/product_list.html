@@ -1,0 +1,169 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Все товары{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/category-list.css' %}">
+<link rel="stylesheet" href="{% static 'css/product-list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="product-list-page">
+    <div class="catlist-layout">
+
+        <aside class="catlist-sidebar d-none d-lg-block" aria-label="Категории">
+            <h2 class="catlist-sidebar__heading">Категории товаров</h2>
+            <nav class="catlist-sidebar__nav">
+                <a href="{% url 'catalog:product_list' %}{% if current_sort %}?sort={{ current_sort }}{% endif %}"
+                   class="catlist-sidebar__item{% if not current_category %} catlist-sidebar__item--active{% endif %}">
+                    Все товары
+                </a>
+                {% for category in categories %}
+                <a href="{% url 'catalog:product_list' %}?category={{ category.slug }}{% if current_sort %}&sort={{ current_sort }}{% endif %}"
+                   class="catlist-sidebar__item{% if current_category == category.slug %} catlist-sidebar__item--active{% endif %}">
+                    {{ category.name }}
+                </a>
+                {% endfor %}
+            </nav>
+        </aside>
+
+        <div class="catlist-content">
+
+            <button class="btn btn-outline-secondary btn-sm mb-2 d-lg-none"
+                    id="catMobileToggle"
+                    type="button">
+                <i class="fas fa-filter me-1"></i>Категории
+            </button>
+            <aside class="catlist-sidebar product-list-sidebar-mobile mb-3 d-lg-none" id="catSidebarMobile" hidden aria-label="Категории">
+                <nav class="catlist-sidebar__nav">
+                    <a href="{% url 'catalog:product_list' %}{% if current_sort %}?sort={{ current_sort }}{% endif %}"
+                       class="catlist-sidebar__item{% if not current_category %} catlist-sidebar__item--active{% endif %}">
+                        Все товары
+                    </a>
+                    {% for category in categories %}
+                    <a href="{% url 'catalog:product_list' %}?category={{ category.slug }}{% if current_sort %}&sort={{ current_sort }}{% endif %}"
+                       class="catlist-sidebar__item{% if current_category == category.slug %} catlist-sidebar__item--active{% endif %}">
+                        {{ category.name }}
+                    </a>
+                    {% endfor %}
+                </nav>
+            </aside>
+
+            <!-- Заголовок -->
+            <div class="pl-heading">
+                <h1 class="pl-heading__title">
+                    {% if current_category %}
+                        {% for category in categories %}{% if category.slug == current_category %}{{ category.name }}{% endif %}{% endfor %}
+                    {% else %}
+                        Все товары
+                    {% endif %}
+                </h1>
+                {% if page_obj %}
+                <span class="pl-heading__count">{{ page_obj.paginator.count }} товаров</span>
+                {% endif %}
+            </div>
+
+            <!-- Тулбар: поиск + сортировка -->
+            <form method="get" id="filterForm">
+                {% if current_category %}
+                <input type="hidden" name="category" value="{{ current_category }}">
+                {% endif %}
+                <div class="pl-toolbar">
+                    <div class="product-suggest-wrap position-relative">
+                        <input type="text"
+                               class="form-control"
+                               name="search"
+                               placeholder="Поиск товаров..."
+                               value="{{ search_query }}"
+                               data-product-suggest
+                               {% if current_category %}data-suggest-category="{{ current_category }}"{% endif %}
+                               autocomplete="off"
+                               aria-label="Поиск">
+                    </div>
+                    <select class="form-select" name="sort" aria-label="Сортировка" onchange="this.form.submit()">
+                        <option value="created_at" {% if current_sort == 'created_at' %}selected{% endif %}>По дате</option>
+                        <option value="price_asc"  {% if current_sort == 'price_asc' %}selected{% endif %}>Цена: сначала дешевле</option>
+                        <option value="price_desc" {% if current_sort == 'price_desc' %}selected{% endif %}>Цена: сначала дороже</option>
+                        <option value="name"       {% if current_sort == 'name' %}selected{% endif %}>По названию</option>
+                    </select>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    {% if search_query or current_sort and current_sort != 'created_at' %}
+                    <a href="{% url 'catalog:product_list' %}{% if current_category %}?category={{ current_category }}{% endif %}"
+                       class="btn btn-outline-secondary" title="Сбросить фильтры">×</a>
+                    {% endif %}
+                </div>
+            </form>
+
+            <!-- Товары -->
+            {% if page_obj %}
+            <div class="row row-cols-2 row-cols-md-3 row-cols-xl-4 g-3">
+                {% for product in page_obj %}
+                <div class="col">
+                    {% include 'includes/product_card.html' with product=product %}
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Пагинация -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Пагинация" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link"
+                           href="?page={{ page_obj.previous_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}">
+                            Назад
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+                    </li>
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link"
+                           href="?page={{ page_obj.next_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}">
+                            Вперёд
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+
+            {% else %}
+            <div class="product-list-empty">
+                {% if search_query %}
+                    Ничего не найдено по запросу «{{ search_query }}».
+                    <a href="{% url 'catalog:product_list' %}{% if current_category %}?category={{ current_category }}{% endif %}">Сбросить поиск</a>
+                {% else %}
+                    В этой категории пока нет товаров.
+                {% endif %}
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    var btn = document.getElementById('catMobileToggle');
+    var sidebar = document.getElementById('catSidebarMobile');
+    if (!btn || !sidebar) return;
+    btn.addEventListener('click', function () {
+        var open = sidebar.hasAttribute('hidden');
+        if (open) {
+            sidebar.removeAttribute('hidden');
+        } else {
+            sidebar.setAttribute('hidden', '');
+        }
+    });
+})();
+</script>
+{% endblock %}

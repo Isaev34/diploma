@@ -1,0 +1,205 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Главная{% endblock %}
+{% block extra_css %}
+<!-- Swiper для каруселей (главная). theme.css и home-hero.css подключены в base -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<link rel="stylesheet" href="{% static 'css/swiper-novinki.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-home">
+{% if banners %}
+<div class="hero-slider mb-5">
+    <div class="swiper swiper-hero">
+        <div class="swiper-wrapper">
+            {% for banner in banners %}
+            <div class="swiper-slide hero-slide{% if banner.image %} hero-slide--has-bg{% endif %}"
+                 data-index="{{ forloop.counter0 }}"
+                 {% if banner.image %}style="background-image: url('{{ banner.image.url }}');"{% endif %}>
+                {% if banner.image %}
+                <img class="hero-slide__bg"
+                     src="{{ banner.image.url }}"
+                     alt=""
+                     width="1920"
+                     height="640"
+                     loading="eager"
+                     decoding="async"
+                     fetchpriority="{% if forloop.first %}high{% else %}low{% endif %}">
+                {% endif %}
+                <div class="hero-slide__overlay"></div>
+                <div class="container hero-slide__content">
+                    <h2 class="hero-slide__title">{{ banner.title }}</h2>
+                    {% if banner.subtitle %}
+                    <p class="hero-slide__subtitle">{{ banner.subtitle }}</p>
+                    {% endif %}
+                    <a href="{{ banner.button_url }}" class="hero-slide__btn">{{ banner.button_text }}</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="swiper-pagination"></div>
+    </div>
+</div>
+{% endif %}
+
+{% if features %}
+<div class="features-strip">
+    <div class="container features-strip__inner">
+        {% for feature in features %}
+        <span class="features-strip__item">
+            <i class="{{ feature.icon }} features-strip__icon" aria-hidden="true"></i>
+            <span class="features-strip__text">{{ feature.text }}</span>
+        </span>
+        {% if not forloop.last %}<span class="features-strip__sep" aria-hidden="true"></span>{% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Sale Products — Swiper карусель -->
+{% if sale_products %}
+<section class="home-section sale-section">
+    <div class="home-section-card">
+        <div class="section-header">
+            <h2 class="section-title">
+                <a href="{% url 'catalog:promotions' %}" class="section-title-link">Акции и скидки &gt;</a>
+            </h2>
+        </div>
+        <div class="swiper swiper-sale">
+            <div class="swiper-wrapper">
+                {% for product in sale_products %}
+                <div class="swiper-slide">
+                    {% include 'includes/product_card.html' with product=product %}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Categories — Популярное -->
+{% if categories %}
+<section class="home-section categories-section">
+    <div class="home-section-card">
+        <div class="container">
+            <div class="section-header mb-4">
+                <h2 class="section-title">
+                    <a href="{% url 'catalog:category_list' %}" class="section-title-link">Популярное &gt;</a>
+                </h2>
+            </div>
+            <div class="bento-grid">
+                {% for category in categories %}
+                    <a href="{% url 'catalog:category_detail' category.slug %}" 
+                       class="bento-card card-{{ forloop.counter }}" 
+                       data-category="{{ category.name|lower }}">
+                        
+                        <div class="bento-info">
+                            <h3 class="bento-name">{{ category.name }}</h3>
+                        </div>
+
+                        {% if category.image %}
+                            <div class="bento-img-container">
+                                <img src="{{ category.image.url }}" alt="{{ category.name }}" class="bento-img">
+                            </div>
+                        {% endif %}
+                    </a>
+                {% endfor %}
+                
+                <a href="{% url 'catalog:category_list' %}" class="bento-card card-catalog">
+                    <div class="bento-info">
+                        <h3 class="bento-name text-white">Весь каталог</h3>
+                    </div>
+                    <div class="bento-img-container">
+                        <i class="fas fa-arrow-right catalog-icon"></i>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- New Products — Swiper карусель -->
+{% if new_products %}
+<section class="home-section novinki-section">
+    <div class="home-section-card">
+        <div class="section-header">
+            <h2 class="section-title">
+                <a href="{% url 'catalog:product_list' %}?new=true" class="section-title-link">Новинки &gt;</a>
+            </h2>
+        </div>
+        <div class="swiper swiper-novinki">
+            <div class="swiper-wrapper">
+                {% for product in new_products %}
+                <div class="swiper-slide">
+                    {% include 'includes/product_card.html' with product=product %}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
+        </div>
+    </div>
+</section>
+{% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var heroEl = document.querySelector('.swiper-hero');
+    if (heroEl) {
+        new Swiper('.swiper-hero', {
+            loop: false,
+            rewind: true,
+            effect: 'fade',
+            fadeEffect: { crossFade: true },
+            autoplay: { delay: 5000, disableOnInteraction: false },
+            pagination: { el: '.swiper-hero .swiper-pagination', clickable: true },
+            speed: 700,
+            watchSlidesProgress: true,
+        });
+    }
+
+    var swiperConfig = {
+        slidesPerView: 1.5,
+        spaceBetween: 8,
+        freeMode: true,
+        breakpoints: {
+            576: { slidesPerView: 2, spaceBetween: 10, freeMode: false },
+            768: { slidesPerView: 3, spaceBetween: 12, freeMode: false },
+            992: { slidesPerView: 4, spaceBetween: 14, freeMode: false },
+            1200: { slidesPerView: 5, spaceBetween: 16, freeMode: false }
+        }
+    };
+
+    var saleEl = document.querySelector('.swiper-sale');
+    if (saleEl) {
+        new Swiper('.swiper-sale', Object.assign({}, swiperConfig, {
+            navigation: {
+                nextEl: '.swiper-sale .swiper-button-next',
+                prevEl: '.swiper-sale .swiper-button-prev',
+            }
+        }));
+    }
+
+    var novinkiEl = document.querySelector('.swiper-novinki');
+    if (novinkiEl) {
+        new Swiper('.swiper-novinki', Object.assign({}, swiperConfig, {
+            navigation: {
+                nextEl: '.swiper-novinki .swiper-button-next',
+                prevEl: '.swiper-novinki .swiper-button-prev',
+            }
+        }));
+    }
+
+});
+</script>
+{% endblock %}

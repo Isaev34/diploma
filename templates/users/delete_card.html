@@ -1,0 +1,38 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Удалить карту{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h3 class="mb-0">
+                    <i class="fas fa-trash"></i> Удаление карты
+                </h3>
+            </div>
+            <div class="card-body">
+                <p>Вы уверены, что хотите удалить карту?</p>
+                <div class="alert alert-warning">
+                    <strong>{{ card.get_card_type_display }} {{ card.get_display_number }}</strong><br>
+                    {{ card.cardholder_name }}
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'users:cards' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times"></i> Отмена
+                        </a>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Удалить карту
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+

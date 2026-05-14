@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заказ оформлен</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #28a745;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+        .content {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+        }
+        .order-info {
+            background-color: white;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            border-left: 4px solid #28a745;
+        }
+        .order-items {
+            margin: 20px 0;
+        }
+        .order-item {
+            padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        .total {
+            font-size: 18px;
+            font-weight: bold;
+            color: #28a745;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #dee2e6;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+            font-size: 12px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .badge-warning {
+            background-color: #ffc107;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Заказ успешно оформлен!</h1>
+    </div>
+    
+    <div class="content">
+        <p>Здравствуйте, <strong>{{ user.username }}</strong>!</p>
+        
+        <p>Ваш заказ <strong>#{{ order.id }}</strong> успешно оформлен и принят в обработку.</p>
+        
+        <div class="order-info">
+            <h3>Информация о заказе</h3>
+            <p><strong>Номер заказа:</strong> #{{ order.id }}</p>
+            <p><strong>Дата оформления:</strong> {{ order.created_at|date:"d.m.Y H:i" }}</p>
+            <p><strong>Статус:</strong> 
+                <span class="badge badge-warning">{{ order.get_status_display }}</span>
+            </p>
+            <p><strong>Способ оплаты:</strong> {{ order.get_payment_method_display }}</p>
+            <p><strong>Адрес доставки:</strong> {{ order.delivery_address }}</p>
+        </div>
+        
+        <div class="order-items">
+            <h3>Состав заказа:</h3>
+            {% for item in order_items %}
+            <div class="order-item">
+                <strong>{{ item.product.name }}</strong><br>
+                <small>Количество: {{ item.quantity }} шт. × {{ item.price_at_purchase|floatformat:0 }} ₽</small>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="total">
+            {% if order.delivery_fee and order.delivery_fee > 0 %}
+            <p>Доставка: {{ order.delivery_fee|floatformat:0 }} ₽</p>
+            {% endif %}
+            <p>Итого к оплате: <strong>{{ order.total_amount|floatformat:0 }} ₽</strong></p>
+            {% if order.bonus_points_used > 0 %}
+            <p style="font-size: 14px; color: #6c757d;">
+                Списано бонусов: {{ order.bonus_points_used }} ₽
+            </p>
+            {% endif %}
+            {% if order.bonus_points_earned > 0 %}
+            <p style="font-size: 14px; color: #28a745;">
+                Начислено бонусов: {{ order.bonus_points_earned }}
+            </p>
+            {% endif %}
+        </div>
+        
+        {% if order.delivery_comment_courier or order.delivery_comment_picker %}
+        <div class="order-info">
+            <h4>Ваши комментарии:</h4>
+            {% if order.delivery_comment_courier %}
+            <p><strong>Для курьера:</strong> {{ order.delivery_comment_courier }}</p>
+            {% endif %}
+            {% if order.delivery_comment_picker %}
+            <p><strong>Для сборщика:</strong> {{ order.delivery_comment_picker }}</p>
+            {% endif %}
+        </div>
+        {% endif %}
+        
+        <p>Вы можете отслеживать статус заказа в <a href="http://127.0.0.1:8000/cart/orders/{{ order.id }}/">личном кабинете</a>.</p>
+        
+        <p>Спасибо за ваш заказ!</p>
+    </div>
+    
+    <div class="footer">
+        <p>Это автоматическое письмо. Пожалуйста, не отвечайте на него.</p>
+        <p>&copy; 2024 Интернет-магазин. Все права защищены.</p>
+    </div>
+</body>
+</html>
+

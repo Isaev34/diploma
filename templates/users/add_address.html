@@ -1,0 +1,184 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Добавить адрес{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/address-form.css' %}">{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="mb-0">
+                    <i class="fas fa-map-marker-alt text-primary"></i> Добавить адрес
+                </h3>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="address-form-section">
+                        <div class="section-title">
+                            <i class="fas fa-map-marker-alt"></i> Адрес доставки
+                        </div>
+
+                        <div class="address-suggest-wrapper">
+                            <label for="address_suggest_input" class="form-label">
+                                <i class="fas fa-search"></i> Поиск адреса
+                            </label>
+                            <div class="address-suggest-input-wrap">
+                                <input type="text" class="form-control" id="address_suggest_input" 
+                                       placeholder="Введите город, улицу и дом..." autocomplete="off">
+                                <i class="fas fa-location-dot input-icon"></i>
+                            </div>
+                            <div id="address_suggest_dropdown" class="address-suggest-dropdown"></div>
+                            <div class="form-text">Выберите адрес из списка — поля заполнятся автоматически</div>
+                        </div>
+                        
+                        <div class="address-fields-grid">
+                            <div class="row g-2 g-md-3">
+                                <div class="col-12">
+                                    <label for="{{ form.city.id_for_label }}" class="form-label">Город *</label>
+                                    {{ form.city }}
+                                    {% if form.city.errors %}<div class="text-danger small">{{ form.city.errors }}</div>{% endif %}
+                                </div>
+                                <div class="col-12">
+                                    <label for="{{ form.street.id_for_label }}" class="form-label">Улица *</label>
+                                    {{ form.street }}
+                                    {% if form.street.errors %}<div class="text-danger small">{{ form.street.errors }}</div>{% endif %}
+                                </div>
+                                <div class="col-6">
+                                    <label for="{{ form.house.id_for_label }}" class="form-label">Дом *</label>
+                                    {{ form.house }}
+                                    {% if form.house.errors %}<div class="text-danger small">{{ form.house.errors }}</div>{% endif %}
+                                </div>
+                                <div class="col-6">
+                                    <label for="{{ form.block.id_for_label }}" class="form-label">Корпус / Стр.</label>
+                                    {{ form.block }}
+                                    {% if form.block.errors %}<div class="text-danger small">{{ form.block.errors }}</div>{% endif %}
+                                </div>
+                                <div class="col-4">
+                                    <label for="{{ form.entrance.id_for_label }}" class="form-label">Подъезд</label>
+                                    {{ form.entrance }}
+                                    {% if form.entrance.errors %}<div class="text-danger small">{{ form.entrance.errors }}</div>{% endif %}
+                                </div>
+                                <div class="col-4">
+                                    <label for="{{ form.floor.id_for_label }}" class="form-label">Этаж</label>
+                                    {{ form.floor }}
+                                    {% if form.floor.errors %}<div class="text-danger small">{{ form.floor.errors }}</div>{% endif %}
+                                </div>
+                                <div class="col-4">
+                                    <label for="{{ form.apartment.id_for_label }}" class="form-label">Кв. / Офис</label>
+                                    {{ form.apartment }}
+                                    {% if form.apartment.errors %}<div class="text-danger small">{{ form.apartment.errors }}</div>{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="address-save-option mt-3">
+                            <div class="form-check">
+                                {{ form.is_default }}
+                                <label class="form-check-label" for="{{ form.is_default.id_for_label }}">
+                                    <i class="fas fa-star text-muted me-1"></i> {{ form.is_default.label }}
+                                </label>
+                            </div>
+                            {% if form.is_default.errors %}<div class="text-danger small">{{ form.is_default.errors }}</div>{% endif %}
+                        </div>
+                        
+                        <div class="alert alert-light border mt-3 mb-0 small">
+                            <i class="fas fa-info-circle text-primary me-2"></i> 
+                            Координаты будут определены автоматически для точной доставки.
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'users:profile' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Назад
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Сохранить адрес
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const suggestInput = document.getElementById('address_suggest_input');
+    const suggestDropdown = document.getElementById('address_suggest_dropdown');
+    let suggestTimeout = null;
+    const SUGGEST_API = '/api/addresses/suggest/';
+
+    function fillAddressFields(s) {
+        const idCity = document.getElementById('id_city');
+        const idStreet = document.getElementById('id_street');
+        const idHouse = document.getElementById('id_house');
+        const idBlock = document.getElementById('id_block');
+        const idEntrance = document.getElementById('id_entrance');
+        const idFloor = document.getElementById('id_floor');
+        const idApartment = document.getElementById('id_apartment');
+        if (idCity) idCity.value = s.city || '';
+        if (idStreet) idStreet.value = s.street || '';
+        if (idHouse) idHouse.value = s.house || '';
+        if (idBlock) idBlock.value = s.block || '';
+        if (idEntrance) idEntrance.value = s.entrance || '';
+        if (idFloor) idFloor.value = s.floor || '';
+        if (idApartment) idApartment.value = s.apartment || '';
+    }
+
+    if (suggestInput && suggestDropdown) {
+        suggestInput.addEventListener('input', function() {
+            const q = this.value.trim();
+            clearTimeout(suggestTimeout);
+            if (q.length < 2) {
+                suggestDropdown.classList.remove('show');
+                return;
+            }
+            suggestTimeout = setTimeout(function() {
+                fetch(SUGGEST_API + '?q=' + encodeURIComponent(q), {
+                    method: 'GET',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    credentials: 'same-origin'
+                })
+                .then(r => r.json())
+                .then(data => {
+                    const list = data.suggestions || [];
+                    if (list.length === 0) {
+                        suggestDropdown.innerHTML = '<div class="suggest-item text-muted px-3 py-2" style="cursor:default">Ничего не найдено</div>';
+                    } else {
+                        suggestDropdown.innerHTML = list.map(function(s, i) {
+                            return '<a href="#" class="suggest-item" data-index="' + i + '">' + (s.value || '') + '</a>';
+                        }).join('');
+                    }
+                    suggestDropdown.classList.add('show');
+                    suggestDropdown._suggestions = list;
+                })
+                .catch(() => { suggestDropdown.classList.remove('show'); });
+            }, 300);
+        });
+
+        suggestDropdown.addEventListener('click', function(e) {
+            e.preventDefault();
+            const item = e.target.closest('.suggest-item');
+            if (!item || !suggestDropdown._suggestions) return;
+            const idx = parseInt(item.dataset.index, 10);
+            const s = suggestDropdown._suggestions[idx];
+            if (s) {
+                fillAddressFields(s);
+                suggestInput.value = s.value || '';
+                suggestDropdown.classList.remove('show');
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!suggestInput.contains(e.target) && !suggestDropdown.contains(e.target)) {
+                suggestDropdown.classList.remove('show');
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

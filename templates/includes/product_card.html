@@ -1,0 +1,76 @@
+{% comment %}
+Сниппет карточки товара в стиле Перекрёсток. Ожидает переменную product.
+{% endcomment %}
+<div class="card product-card h-100 position-relative d-flex flex-column {% if product.discount_percent > 0 %}product-card--has-discount{% endif %}">
+    <div class="product-image-container">
+        {% if product.discount_percent > 0 %}
+        <span class="product-card-discount-badge">-{{ product.discount_percent|floatformat:0 }}%</span>
+        {% endif %}
+        <button type="button"
+                class="product-card-favorite-btn js-toggle-fav {% if product.id in favourite_ids %}is-favourite{% endif %}"
+                data-product-id="{{ product.id }}"
+                data-toggle-url="{% url 'catalog:toggle_favourite' product.id %}"
+                title="{% if product.id in favourite_ids %}Убрать из избранного{% else %}В избранное{% endif %}"
+                aria-label="В избранное">
+            <i class="{% if product.id in favourite_ids %}fas{% else %}far{% endif %} fa-heart"></i>
+        </button>
+        <a href="{% url 'catalog:product_detail' product.slug %}" class="text-decoration-none product-image-link">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+            {% else %}
+            <div class="product-card-img-placeholder d-flex align-items-center justify-content-center">
+                <i class="fas fa-image fa-2x text-muted"></i>
+            </div>
+            {% endif %}
+        </a>
+    </div>
+
+    <div class="card-body product-card-body d-flex flex-column">
+        {% if product.reviews_count > 0 %}
+        <div class="product-card-rating-line">
+            <span class="product-card-rating">
+                <i class="fas fa-star text-warning"></i> {{ product.average_rating|floatformat:1 }}
+            </span>
+        </div>
+        {% endif %}
+
+        <h5 class="card-title product-card-title">
+            <a href="{% url 'catalog:product_detail' product.slug %}" class="text-decoration-none text-dark">{{ product.name }}</a>
+        </h5>
+
+        {% if product.discount_percent > 0 %}
+        <div class="product-card-old-price-line">
+            <span class="old-price">{{ product.price|floatformat:0 }} ₽</span>
+        </div>
+        {% endif %}
+
+        <div class="product-card-price-row mt-auto">
+            <span class="current-price">{{ product.final_price|floatformat:0 }} ₽</span>
+            {% if product.in_stock %}
+            <div class="product-card-cart-wrap">
+                <form method="post"
+                      action="{% url 'cart:add_to_cart' product.id %}"
+                      class="product-card-cart-form js-product-card-add-form"
+                      data-product-id="{{ product.id }}">
+                    {% csrf_token %}
+                    <input type="hidden" name="quantity" value="1">
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <button type="submit" class="product-card-cart-btn" title="Добавить в корзину">
+                        <i class="fas fa-shopping-cart"></i>
+                    </button>
+                </form>
+                <div class="product-card-counter product-card-counter--hidden" data-cart-item-id="" data-product-id="{{ product.id }}" role="group" aria-label="Количество в корзине">
+                    <button type="button" class="product-card-counter-btn product-card-counter-btn--minus" aria-label="Уменьшить">−</button>
+                    <span class="product-card-counter-num">0</span>
+                    <button type="button" class="product-card-counter-btn product-card-counter-btn--plus" aria-label="Увеличить">+</button>
+                </div>
+            </div>
+            {% else %}
+            <button type="button" class="product-card-cart-btn" disabled title="Нет в наличии">
+                <i class="fas fa-times"></i>
+            </button>
+            {% endif %}
+        </div>
+        <div class="product-quantity d-none" data-product-id="{{ product.id }}"></div>
+    </div>
+</div>

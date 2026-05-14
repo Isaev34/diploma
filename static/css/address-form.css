@@ -1,0 +1,183 @@
+/* Стили формы адреса — современный и привлекательный вид */
+
+.address-form-section {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 16px;
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.address-form-section .section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 1.25rem;
+    font-size: 1.05rem;
+}
+
+.address-form-section .section-title i {
+    color: #0ea5e9;
+    font-size: 1.1rem;
+}
+
+/* Поле поиска адреса — выделенный блок */
+.address-suggest-wrapper {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.address-suggest-wrapper .form-label {
+    font-weight: 600;
+    color: #475569;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.address-suggest-wrapper .form-control {
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    padding: 0.75rem 1rem 0.75rem 2.75rem;
+    font-size: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.address-suggest-wrapper .form-control:focus {
+    border-color: #0ea5e9;
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+}
+
+.address-suggest-wrapper .form-control::placeholder {
+    color: #94a3b8;
+}
+
+.address-suggest-input-wrap {
+    position: relative;
+}
+
+.address-suggest-input-wrap .input-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 1rem;
+    pointer-events: none;
+    transition: color 0.2s;
+}
+
+.address-suggest-wrapper .form-control:focus ~ .input-icon,
+.address-suggest-input-wrap:focus-within .input-icon {
+    color: #0ea5e9;
+}
+
+.address-suggest-wrapper .form-text {
+    margin-top: 0.4rem;
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+/* Выпадающий список подсказок */
+.address-suggest-dropdown {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    margin-top: 4px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12), 0 2px 10px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+    max-height: 280px;
+    overflow-y: auto;
+    z-index: 1050;
+}
+
+.address-suggest-dropdown.show {
+    display: block;
+    animation: address-dropdown-fade 0.2s ease;
+}
+
+@keyframes address-dropdown-fade {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.address-suggest-dropdown .suggest-item {
+    display: block;
+    padding: 0.7rem 1rem;
+    border: none;
+    color: #334155;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: background 0.15s ease;
+    border-bottom: 1px solid #f1f5f9;
+    cursor: pointer;
+}
+
+.address-suggest-dropdown .suggest-item:last-child {
+    border-bottom: none;
+}
+
+.address-suggest-dropdown .suggest-item:hover {
+    background: #f0f9ff;
+    color: #0c4a6e;
+}
+
+.address-suggest-dropdown .suggest-item:active {
+    background: #e0f2fe;
+}
+
+/* Поля формы адреса */
+.address-fields-grid .form-label {
+    font-weight: 500;
+    color: #475569;
+    font-size: 0.9rem;
+}
+
+.address-fields-grid .form-control {
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.address-fields-grid .form-control:focus {
+    border-color: #0ea5e9;
+    box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.12);
+}
+
+/* Блок «Сохранить адрес» */
+.address-save-option {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    border: 1px solid #e2e8f0;
+}
+
+.address-save-option .form-check-input {
+    width: 1.15em;
+    height: 1.15em;
+    margin-top: 0.1em;
+}
+
+.address-save-option .form-check-label {
+    font-weight: 500;
+    color: #334155;
+}
+
+/* Блок сохранённого адреса */
+.saved-address-card {
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    border: 1px solid #93c5fd;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+}
+
+.saved-address-card .btn-outline-primary {
+    border-radius: 8px;
+    font-weight: 500;
+}

@@ -1,0 +1,472 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Доставка и оплата — LogiDrive{% endblock %}
+
+{% block extra_css %}
+<style>
+    .delivery-hero {
+        background: linear-gradient(135deg, #0d4f8c 0%, #1a7fd4 60%, #3fa0f0 100%);
+        border-radius: 20px;
+        color: #fff;
+        padding: 56px 48px;
+        margin-bottom: 40px;
+        display: flex;
+        align-items: center;
+        gap: 40px;
+        position: relative;
+        overflow: hidden;
+    }
+    .delivery-hero::after {
+        content: '';
+        position: absolute;
+        right: -60px;
+        top: -60px;
+        width: 280px;
+        height: 280px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.07);
+    }
+    .delivery-hero__icon {
+        font-size: 80px;
+        flex-shrink: 0;
+        line-height: 1;
+        position: relative;
+        z-index: 1;
+    }
+    .delivery-hero__text { position: relative; z-index: 1; }
+    .delivery-hero__title { font-size: 2.2rem; font-weight: 800; margin-bottom: 12px; }
+    .delivery-hero__subtitle { font-size: 1.15rem; opacity: 0.92; margin-bottom: 0; }
+
+    .info-card {
+        background: var(--bs-body-bg, #fff);
+        border: 1px solid var(--bs-border-color, #e9ecef);
+        border-radius: 16px;
+        padding: 28px 24px;
+        height: 100%;
+        transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .info-card:hover {
+        box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+        transform: translateY(-3px);
+    }
+    .info-card__icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 16px;
+    }
+    .info-card__icon--blue  { background: rgba(26,127,212,0.12); color: #1a7fd4; }
+    .info-card__icon--green { background: rgba(40,167,69,0.12);  color: #28a745; }
+    .info-card__icon--orange{ background: rgba(253,126,20,0.12); color: #fd7e14; }
+    .info-card__icon--purple{ background: rgba(111,66,193,0.12); color: #6f42c1; }
+    .info-card__title { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+    .info-card__text  { font-size: 0.95rem; color: var(--bs-secondary-color, #6c757d); margin-bottom: 0; }
+
+    .delivery-zone-table th { background: rgba(26,127,212,0.08); white-space: nowrap; }
+    .delivery-zone-table td { vertical-align: middle; }
+
+    .payment-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--bs-body-bg, #fff);
+        border: 1px solid var(--bs-border-color, #dee2e6);
+        border-radius: 50px;
+        padding: 10px 20px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: box-shadow 0.15s;
+    }
+    .payment-pill:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.10); }
+    .payment-pill i { font-size: 1.3rem; }
+
+    .faq-delivery .accordion-button:not(.collapsed) {
+        color: #1a7fd4;
+        background-color: rgba(26,127,212,0.06);
+        box-shadow: none;
+    }
+    .faq-delivery .accordion-button:focus { box-shadow: none; }
+
+    .delivery-steps { counter-reset: step; }
+    .delivery-step {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+        margin-bottom: 20px;
+    }
+    .delivery-step__num {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #1a7fd4;
+        color: #fff;
+        font-weight: 700;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+    .delivery-step__title { font-weight: 700; margin-bottom: 2px; }
+    .delivery-step__text  { font-size: 0.93rem; color: var(--bs-secondary-color, #6c757d); margin-bottom: 0; }
+
+    .dark-theme .info-card { background: #2a2a2a; border-color: #3a3a3a; }
+    .dark-theme .payment-pill { background: #2a2a2a; border-color: #3a3a3a; }
+
+    @media (max-width: 767px) {
+        .delivery-hero { flex-direction: column; padding: 32px 20px; text-align: center; }
+        .delivery-hero__icon { font-size: 56px; }
+        .delivery-hero__title { font-size: 1.6rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="delivery-page">
+
+    <!-- Hero -->
+    <div class="delivery-hero mb-4">
+        <div class="delivery-hero__icon">🚚</div>
+        <div class="delivery-hero__text">
+            <h1 class="delivery-hero__title">Доставка и оплата</h1>
+            <p class="delivery-hero__subtitle">
+                Доставляем свежие продукты до вашей двери.<br>
+                Быстро, удобно и по доступным ценам.
+            </p>
+        </div>
+    </div>
+
+    <!-- Ключевые факты -->
+    <div class="row g-3 mb-5">
+        <div class="col-sm-6 col-lg-3">
+            <div class="info-card">
+                <div class="info-card__icon info-card__icon--blue">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="info-card__title">Быстрая доставка</div>
+                <p class="info-card__text">Доставляем в день заказа или на следующий день в удобный для вас интервал.</p>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="info-card">
+                <div class="info-card__icon info-card__icon--green">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="info-card__title">Геолокация адреса</div>
+                <p class="info-card__text">Адрес определяется автоматически. Стоимость доставки рассчитывается по расстоянию.</p>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="info-card">
+                <div class="info-card__icon info-card__icon--orange">
+                    <i class="fas fa-box-open"></i>
+                </div>
+                <div class="info-card__title">Бережная упаковка</div>
+                <p class="info-card__text">Каждый заказ тщательно собирается и упаковывается перед отправкой.</p>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="info-card">
+                <div class="info-card__icon info-card__icon--purple">
+                    <i class="fas fa-camera"></i>
+                </div>
+                <div class="info-card__title">Фотоотчёт</div>
+                <p class="info-card__text">При бесконтактной доставке курьер оставляет фото у двери.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Стоимость доставки -->
+    <section class="mb-5">
+        <h2 class="fw-bold mb-3">Стоимость доставки</h2>
+        <div class="row g-4 align-items-start">
+            <div class="col-md-7">
+                <div class="table-responsive">
+                    <table class="table delivery-zone-table table-bordered rounded overflow-hidden">
+                        <thead>
+                            <tr>
+                                <th>Расстояние от склада</th>
+                                <th>Стоимость</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>До 1 км</td>
+                                <td><strong>240 ₽</strong></td>
+                            </tr>
+                            <tr>
+                                <td>До 3 км</td>
+                                <td><strong>280–360 ₽</strong></td>
+                            </tr>
+                            <tr>
+                                <td>До 5 км</td>
+                                <td><strong>360–440 ₽</strong></td>
+                            </tr>
+                            <tr>
+                                <td>До 10 км</td>
+                                <td><strong>440–640 ₽</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Более 10 км</td>
+                                <td>Рассчитывается индивидуально</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-muted" style="font-size:0.9rem;">
+                    <i class="fas fa-info-circle text-primary me-1"></i>
+                    Точная стоимость рассчитывается автоматически при оформлении заказа на основе вашего адреса.
+                    Базовая ставка: <strong>200 ₽</strong> + <strong>40 ₽/км</strong>.
+                </p>
+            </div>
+            <div class="col-md-5">
+                <div class="info-card" style="border-left: 4px solid #1a7fd4;">
+                    <div class="info-card__title mb-2">
+                        <i class="fas fa-calculator text-primary me-2"></i>Как считается стоимость
+                    </div>
+                    <p class="info-card__text mb-2">
+                        Стоимость = <strong>200 ₽</strong> (базовая) + <strong>40 ₽ × расстояние (км)</strong>
+                    </p>
+                    <p class="info-card__text mb-2">
+                        Расстояние рассчитывается от склада до адреса доставки по прямой.
+                    </p>
+                    <p class="info-card__text mb-0">
+                        Склад находится в г. Домодедово (Московская область).
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Как проходит доставка -->
+    <section class="mb-5">
+        <h2 class="fw-bold mb-3">Как проходит доставка</h2>
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="delivery-steps">
+                    <div class="delivery-step">
+                        <div class="delivery-step__num">1</div>
+                        <div>
+                            <div class="delivery-step__title">Оформление заказа</div>
+                            <p class="delivery-step__text">Добавьте товары в корзину, укажите адрес и выберите способ оплаты.</p>
+                        </div>
+                    </div>
+                    <div class="delivery-step">
+                        <div class="delivery-step__num">2</div>
+                        <div>
+                            <div class="delivery-step__title">Сборка заказа</div>
+                            <p class="delivery-step__text">Пикер на складе собирает ваш заказ и сканирует каждый товар для проверки.</p>
+                        </div>
+                    </div>
+                    <div class="delivery-step">
+                        <div class="delivery-step__num">3</div>
+                        <div>
+                            <div class="delivery-step__title">Передача курьеру</div>
+                            <p class="delivery-step__text">Готовый заказ передаётся курьеру. Вы получите уведомление об отправке.</p>
+                        </div>
+                    </div>
+                    <div class="delivery-step">
+                        <div class="delivery-step__num">4</div>
+                        <div>
+                            <div class="delivery-step__title">Доставка</div>
+                            <p class="delivery-step__text">Курьер привозит заказ по указанному адресу. При бесконтактной доставке оставляет у двери и фотографирует.</p>
+                        </div>
+                    </div>
+                    <div class="delivery-step">
+                        <div class="delivery-step__num">5</div>
+                        <div>
+                            <div class="delivery-step__title">Бонусы начислены</div>
+                            <p class="delivery-step__text">После получения заказа на ваш счёт автоматически зачисляются 5% бонусами.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="info-card h-100" style="background: linear-gradient(135deg, rgba(26,127,212,0.06) 0%, rgba(63,160,240,0.06) 100%);">
+                    <h5 class="fw-bold mb-3">Статусы заказа</h5>
+                    <div class="d-flex flex-column gap-2">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="badge rounded-pill" style="background:#6c757d; min-width:110px;">Ожидает</span>
+                            <span class="info-card__text">Заказ принят, ожидает сборки</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="badge rounded-pill" style="background:#fd7e14; min-width:110px;">Собирается</span>
+                            <span class="info-card__text">Пикер собирает заказ на складе</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="badge rounded-pill" style="background:#0d6efd; min-width:110px;">Собран</span>
+                            <span class="info-card__text">Заказ готов, ожидает курьера</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="badge rounded-pill" style="background:#1a7fd4; min-width:110px;">В доставке</span>
+                            <span class="info-card__text">Курьер везёт заказ к вам</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="badge rounded-pill" style="background:#28a745; min-width:110px;">Доставлен</span>
+                            <span class="info-card__text">Заказ получен, бонусы начислены</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="badge rounded-pill" style="background:#dc3545; min-width:110px;">Отменён</span>
+                            <span class="info-card__text">Заказ отменён</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Способы оплаты -->
+    <section class="mb-5">
+        <h2 class="fw-bold mb-3">Способы оплаты</h2>
+        <div class="d-flex flex-wrap gap-3 mb-4">
+            <div class="payment-pill">
+                <i class="fas fa-money-bill-wave text-success"></i>
+                Наличными курьеру
+            </div>
+            <div class="payment-pill">
+                <i class="fas fa-credit-card text-primary"></i>
+                Банковская карта
+            </div>
+            <div class="payment-pill">
+                <i class="fas fa-star text-warning"></i>
+                Бонусные баллы
+            </div>
+            <div class="payment-pill">
+                <i class="fas fa-tag text-danger"></i>
+                Промокод + оплата
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="info-card" style="border-left: 4px solid #28a745;">
+                    <div class="info-card__title mb-1">
+                        <i class="fas fa-star text-warning me-2"></i>Оплата бонусами
+                    </div>
+                    <p class="info-card__text">
+                        Накопленные бонусы можно потратить при оформлении заказа. 1 бонус = 1 рубль.
+                        Оплачивайте бонусами до 100% стоимости товаров.
+                        <a href="{% url 'catalog:bonus_program' %}" class="text-success">Подробнее о бонусной программе →</a>
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="info-card" style="border-left: 4px solid #fd7e14;">
+                    <div class="info-card__title mb-1">
+                        <i class="fas fa-tag text-danger me-2"></i>Промокоды
+                    </div>
+                    <p class="info-card__text">
+                        Используйте промокоды для получения скидки на заказ. Промокод вводится на странице
+                        оформления заказа. Можно комбинировать с бонусами.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="mb-5">
+        <h2 class="fw-bold mb-3">Частые вопросы</h2>
+        <div class="accordion faq-delivery" id="deliveryFaq">
+
+            <div class="accordion-item border rounded mb-2">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed fw-semibold" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#dfaq1">
+                        В какое время работает доставка?
+                    </button>
+                </h3>
+                <div id="dfaq1" class="accordion-collapse collapse" data-bs-parent="#deliveryFaq">
+                    <div class="accordion-body text-muted">
+                        Доставка осуществляется ежедневно. Конкретное время зависит от загруженности курьеров и
+                        вашей удалённости от склада. Заказы, оформленные в первой половине дня, как правило,
+                        доставляются в тот же день.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item border rounded mb-2">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed fw-semibold" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#dfaq2">
+                        Можно ли изменить адрес после оформления заказа?
+                    </button>
+                </h3>
+                <div id="dfaq2" class="accordion-collapse collapse" data-bs-parent="#deliveryFaq">
+                    <div class="accordion-body text-muted">
+                        Изменить адрес можно только пока заказ находится в статусе
+                        <strong>«Ожидает»</strong>. После начала сборки изменение адреса недоступно.
+                        Для изменения обратитесь в поддержку.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item border rounded mb-2">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed fw-semibold" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#dfaq3">
+                        Что делать, если товар не подошёл или отсутствовал?
+                    </button>
+                </h3>
+                <div id="dfaq3" class="accordion-collapse collapse" data-bs-parent="#deliveryFaq">
+                    <div class="accordion-body text-muted">
+                        При сборке заказа пикер может предложить замену отсутствующего товара на аналогичный.
+                        Если замена вам не подходит, позиция будет исключена из заказа, а её стоимость
+                        возвращена на ваш счёт или бонусами.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item border rounded mb-2">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed fw-semibold" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#dfaq4">
+                        Как отследить статус заказа?
+                    </button>
+                </h3>
+                <div id="dfaq4" class="accordion-collapse collapse" data-bs-parent="#deliveryFaq">
+                    <div class="accordion-body text-muted">
+                        Статус заказа доступен в разделе
+                        <a href="{% url 'cart:order_list' %}" class="text-primary">«Мои заказы»</a>
+                        в вашем личном кабинете. Статус обновляется в реальном времени.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item border rounded mb-2">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed fw-semibold" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#dfaq5">
+                        Как отменить заказ?
+                    </button>
+                </h3>
+                <div id="dfaq5" class="accordion-collapse collapse" data-bs-parent="#deliveryFaq">
+                    <div class="accordion-body text-muted">
+                        Отменить заказ можно в разделе «Мои заказы» до начала его сборки (статус «Ожидает»).
+                        После начала сборки отмена невозможна.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="mb-4">
+        <div class="info-card text-center" style="background: linear-gradient(135deg, rgba(26,127,212,0.06) 0%, rgba(63,160,240,0.08) 100%);">
+            <i class="fas fa-shopping-basket mb-3" style="font-size:2.5rem; color:#1a7fd4;"></i>
+            <h4 class="fw-bold mb-2">Готовы сделать заказ?</h4>
+            <p class="text-muted mb-3">Выберите свежие продукты — доставим быстро и аккуратно.</p>
+            <a href="{% url 'catalog:product_list' %}" class="btn btn-primary btn-lg px-5">
+                <i class="fas fa-arrow-right me-2"></i>Перейти к товарам
+            </a>
+        </div>
+    </section>
+
+</div>
+{% endblock %}

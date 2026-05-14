@@ -1,0 +1,116 @@
+/* Оформление заказа — минималистичный вид в духе сайта */
+
+.checkout-page .checkout-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 1.5rem 0;
+    color: #1a1a1a;
+}
+
+.checkout-page .card {
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.checkout-page .card-header {
+    background: transparent;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    padding: 1rem 1.25rem;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: #1a1a1a;
+}
+
+.checkout-page .card-body {
+    padding: 1.25rem;
+}
+
+/* Форма: скругления и зелёный фокус в духе сайта */
+.checkout-page .form-control,
+.checkout-page .form-select {
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.checkout-page .form-control:focus,
+.checkout-page .form-select:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.15);
+}
+
+.checkout-page .address-form-section {
+    border-radius: 12px;
+    border-color: rgba(0, 0, 0, 0.06);
+}
+
+.checkout-page .address-form-section .section-title i {
+    color: #28a745;
+}
+
+.checkout-page .address-suggest-wrapper .form-control:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.15);
+}
+
+.checkout-page .saved-address-card {
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    background: #f8f9fa;
+}
+
+.checkout-page .saved-address-card .btn {
+    border-radius: 10px;
+}
+
+.checkout-page .form-check-input:checked {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.checkout-page .btn-success {
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.checkout-page .btn-outline-secondary {
+    border-radius: 10px;
+}
+
+/* Состав заказа в сайдбаре */
+.checkout-page .cart-summary-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    font-size: 0.9rem;
+}
+
+.checkout-page .cart-summary-item:last-of-type {
+    border-bottom: none;
+}
+
+.checkout-page .cart-summary-total-row {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    font-weight: 700;
+}
+
+.checkout-page .cart-summary-total-row .amount {
+    color: #28a745;
+}
+
+/* Бонусы */
+.checkout-page .bonus-card .card-body {
+    border-radius: 12px;
+}
+
+.checkout-page .bonus-card .text-success i {
+    color: #28a745;
+}
+
+@media (max-width: 767.98px) {
+    .checkout-page .card-body {
+        padding: 1rem;
+    }
+}
