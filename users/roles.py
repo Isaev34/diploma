@@ -4,8 +4,8 @@
 """
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
-from catalog.models import Category, Product
-from cart.models import Order, OrderItem
+from catalog.models import Category, Product, Promotion
+from cart.models import Order, OrderItem, PromoCode
 from users.models import User
 
 
@@ -113,6 +113,29 @@ def has_permission(user, permission_codename, app_label=None):
         return user.has_perm(permission_codename)
 
 
+def get_manager_permissions():
+    """Права Django для группы «Менеджеры»."""
+    manager_permissions = []
+    category_ct = ContentType.objects.get_for_model(Category)
+    manager_permissions.extend(Permission.objects.filter(content_type=category_ct))
+    product_ct = ContentType.objects.get_for_model(Product)
+    manager_permissions.extend(Permission.objects.filter(content_type=product_ct))
+    order_ct = ContentType.objects.get_for_model(Order)
+    manager_permissions.extend(
+        Permission.objects.filter(
+            content_type=order_ct,
+            codename__in=["view_order", "change_order"],
+        )
+    )
+    orderitem_ct = ContentType.objects.get_for_model(OrderItem)
+    manager_permissions.extend(Permission.objects.filter(content_type=orderitem_ct))
+    promotion_ct = ContentType.objects.get_for_model(Promotion)
+    manager_permissions.extend(Permission.objects.filter(content_type=promotion_ct))
+    promocode_ct = ContentType.objects.get_for_model(PromoCode)
+    manager_permissions.extend(Permission.objects.filter(content_type=promocode_ct))
+    return manager_permissions
+
+
 def ensure_role_groups(verbose=False):
     """Создаёт отсутствующие группы ролей и синхронизирует права."""
     existing = set(
@@ -142,21 +165,7 @@ def setup_roles(verbose=True):
 
     # 2. Группа Менеджеров
     manager_group, mgr_created = Group.objects.get_or_create(name=GROUP_MANAGER)
-    manager_permissions = []
-    category_ct = ContentType.objects.get_for_model(Category)
-    manager_permissions.extend(Permission.objects.filter(content_type=category_ct))
-    product_ct = ContentType.objects.get_for_model(Product)
-    manager_permissions.extend(Permission.objects.filter(content_type=product_ct))
-    order_ct = ContentType.objects.get_for_model(Order)
-    manager_permissions.extend(
-        Permission.objects.filter(
-            content_type=order_ct,
-            codename__in=["view_order", "change_order"],
-        )
-    )
-    orderitem_ct = ContentType.objects.get_for_model(OrderItem)
-    manager_permissions.extend(Permission.objects.filter(content_type=orderitem_ct))
-    manager_group.permissions.set(manager_permissions)
+    manager_group.permissions.set(get_manager_permissions())
     _verb = "Создана" if mgr_created else "Обновлена"
     _log(f"[OK] {_verb} группа '{GROUP_MANAGER}' ({manager_group.permissions.count()} прав)")
 
