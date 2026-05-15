@@ -1,6 +1,6 @@
 """
 Система ролей и прав доступа (RBAC)
-Определяет 4 уровня доступа: Администратор, Менеджер, Курьер, Покупатель
+Роли: Администратор, Менеджер, Покупатель, Курьер, Сборщик
 """
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
@@ -22,6 +22,17 @@ GROUP_MANAGER = 'Менеджеры'
 GROUP_CUSTOMER = 'Покупатели'
 GROUP_COURIER = 'Курьеры'
 GROUP_PICKER = 'Сборщики'
+
+ROLE_LABELS = {
+    ROLE_ADMIN: 'Администратор',
+    ROLE_MANAGER: 'Менеджер',
+    ROLE_CUSTOMER: 'Покупатель',
+    ROLE_COURIER: 'Курьер',
+    ROLE_PICKER: 'Сборщик',
+}
+ROLE_CHOICES = tuple(ROLE_LABELS.items())
+
+ALL_ROLE_GROUPS = (GROUP_ADMIN, GROUP_MANAGER, GROUP_CUSTOMER, GROUP_COURIER, GROUP_PICKER)
 
 
 def get_user_role(user):
@@ -102,18 +113,32 @@ def has_permission(user, permission_codename, app_label=None):
         return user.has_perm(permission_codename)
 
 
-def setup_roles():
+def ensure_role_groups(verbose=False):
+    """Создаёт отсутствующие группы ролей и синхронизирует права."""
+    existing = set(
+        Group.objects.filter(name__in=ALL_ROLE_GROUPS).values_list('name', flat=True)
+    )
+    if existing != set(ALL_ROLE_GROUPS):
+        return setup_roles(verbose=verbose)
+    return None
+
+
+def setup_roles(verbose=True):
     """Создание групп и назначение прав доступа.
 
     Права для каждой группы синхронизируются при каждом вызове (не только при
     первом создании группы), чтобы после появления новых моделей или смены
     набора прав в коде менеджеры/курьеры и т.д. не оставались со старым набором.
     """
+    def _log(msg):
+        if verbose:
+            print(msg)
+
     # 1. Группа Администраторов
     admin_group, admin_created = Group.objects.get_or_create(name=GROUP_ADMIN)
     admin_group.permissions.set(Permission.objects.all())
     _verb = "Создана" if admin_created else "Обновлена"
-    print(f"[OK] {_verb} группа '{GROUP_ADMIN}' ({admin_group.permissions.count()} прав)")
+    _log(f"[OK] {_verb} группа '{GROUP_ADMIN}' ({admin_group.permissions.count()} прав)")
 
     # 2. Группа Менеджеров
     manager_group, mgr_created = Group.objects.get_or_create(name=GROUP_MANAGER)
@@ -133,7 +158,7 @@ def setup_roles():
     manager_permissions.extend(Permission.objects.filter(content_type=orderitem_ct))
     manager_group.permissions.set(manager_permissions)
     _verb = "Создана" if mgr_created else "Обновлена"
-    print(f"[OK] {_verb} группа '{GROUP_MANAGER}' ({manager_group.permissions.count()} прав)")
+    _log(f"[OK] {_verb} группа '{GROUP_MANAGER}' ({manager_group.permissions.count()} прав)")
 
     # 3. Группа Покупателей
     customer_group, cust_created = Group.objects.get_or_create(name=GROUP_CUSTOMER)
@@ -155,7 +180,7 @@ def setup_roles():
     )
     customer_group.permissions.set(customer_permissions)
     _verb = "Создана" if cust_created else "Обновлена"
-    print(f"[OK] {_verb} группа '{GROUP_CUSTOMER}' ({customer_group.permissions.count()} прав)")
+    _log(f"[OK] {_verb} группа '{GROUP_CUSTOMER}' ({customer_group.permissions.count()} прав)")
 
     # 4. Группа Курьеров
     courier_group, cour_created = Group.objects.get_or_create(name=GROUP_COURIER)
@@ -173,7 +198,7 @@ def setup_roles():
     )
     courier_group.permissions.set(courier_permissions)
     _verb = "Создана" if cour_created else "Обновлена"
-    print(f"[OK] {_verb} группа '{GROUP_COURIER}' ({courier_group.permissions.count()} прав)")
+    _log(f"[OK] {_verb} группа '{GROUP_COURIER}' ({courier_group.permissions.count()} прав)")
 
     # 5. Группа Сборщиков
     picker_group, pick_created = Group.objects.get_or_create(name=GROUP_PICKER)
@@ -198,13 +223,14 @@ def setup_roles():
     )
     picker_group.permissions.set(picker_permissions)
     _verb = "Создана" if pick_created else "Обновлена"
-    print(f"[OK] {_verb} группа '{GROUP_PICKER}' ({picker_group.permissions.count()} прав)")
+    _log(f"[OK] {_verb} группа '{GROUP_PICKER}' ({picker_group.permissions.count()} прав)")
 
     return admin_group, manager_group, customer_group, courier_group, picker_group
 
 
 def assign_role_to_user(user, role):
     """Назначить роль пользователю"""
+    ensure_role_groups(verbose=False)
     # Удаляем пользователя из всех групп
     user.groups.clear()
     

@@ -2,9 +2,21 @@ import random
 
 from django import forms
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm, UserCreationForm
+from django.contrib.auth.forms import (
+    PasswordResetForm,
+    SetPasswordForm,
+    UserChangeForm,
+    UserCreationForm,
+)
 
 from .models import User, UserCard, Address
+from .roles import (
+    ROLE_CHOICES,
+    ROLE_CUSTOMER,
+    assign_role_to_user,
+    ensure_role_groups,
+    get_user_role,
+)
 
 
 class BootstrapPasswordResetForm(PasswordResetForm):
@@ -181,7 +193,71 @@ class UserCardForm(forms.ModelForm):
         return card
 
 
+ROLE_FIELD_HELP = (
+    'Администратор и менеджер — доступ к админ-панели. '
+    'Курьер и сборщик — мобильные приложения. Покупатель — сайт.'
+)
 
+
+class AdminUserCreationForm(UserCreationForm):
+    """Форма создания пользователя в админке с выбором роли."""
+
+    role = forms.ChoiceField(
+        label='Роль',
+        choices=ROLE_CHOICES,
+        initial=ROLE_CUSTOMER,
+        help_text=ROLE_FIELD_HELP,
+    )
+    email = forms.EmailField(required=False, label='Email')
+    phone = forms.CharField(max_length=20, required=False, label='Телефон')
+    bonus_points = forms.IntegerField(required=False, initial=0, label='Бонусные баллы')
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'phone', 'bonus_points')
+
+    def __init__(self, *args, **kwargs):
+        ensure_role_groups(verbose=False)
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.email = self.cleaned_data.get('email', '')
+        user.phone = self.cleaned_data.get('phone', '')
+        user.bonus_points = self.cleaned_data.get('bonus_points') or 0
+        if commit:
+            user.save()
+            assign_role_to_user(user, self.cleaned_data['role'])
+        return user
+
+
+class AdminUserChangeForm(UserChangeForm):
+    """Форма редактирования пользователя в админке с выбором роли."""
+
+    role = forms.ChoiceField(
+        label='Роль',
+        choices=ROLE_CHOICES,
+        help_text=ROLE_FIELD_HELP,
+    )
+
+    class Meta(UserChangeForm.Meta):
+        model = User
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        ensure_role_groups(verbose=False)
+        super().__init__(*args, **kwargs)
+        if self.instance.pk:
+            self.fields['role'].initial = get_user_role(self.instance)
+        for name in ('groups', 'user_permissions'):
+            self.fields.pop(name, None)
+
+    def save(self, commit=True):
+        user = super().save(commit=commit)
+        role = self.cleaned_data.get('role')
+        if role:
+            assign_role_to_user(user, role)
+        return user
 
 
 
